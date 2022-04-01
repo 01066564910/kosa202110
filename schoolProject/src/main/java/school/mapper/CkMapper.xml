@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="school.mapper.CkMapper">
+	
+	
+	<select id="setEmailCheck" parameterType="string" resultType="ckeckIdEmail">
+		select  professor_email userEmail  , professor_id userId
+		from professor
+		where professor_Email = #{userEmail}
+		union
+		select  student_email userEmail  , student_id userId
+		from student
+		where student_email = #{userEmail}
+		
+	</select>
+	
+	<select id="setLogin" parameterType="string" resultType="authInfoDTO">
+			select professor_id userId  , professor_pw userPw , 'professor' grade
+			from professor
+			where professor_id = #{userId}
+			union
+			select student_id userId  , student_pw userPw , 'student' grade
+			from student
+			where student_id = #{userId}
+	</select>
+
+	<select id="setIdCheck" parameterType="string" resultType="ckeckIdEmail">
+		select professor_id userId 
+		from professor
+		where professor_id = #{UserId}
+		union
+		select student_id userId 
+		from student
+		where student_id = #{UserId}
+		
+	</select>
+	
+</mapper>

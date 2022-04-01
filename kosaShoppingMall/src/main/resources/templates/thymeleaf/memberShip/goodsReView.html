@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="reviewWrite" method="post">
+<input type="hidden" name="goodsNum" th:value="${goodsNum}"/>
+<input type="hidden" name="purchaseNum" th:value="${purchaseNum}"/>
+	<table>
+		<tr>
+			<td>리뷰작성</td>
+			<td><textarea rows="5" cols="30" name="reviewWrite"></textarea></td>	
+		</tr>
+		<tr>		<input type="submit" value="리뷰등록"/></tr>
+	</table>
+</form>
+</body>
+</html>

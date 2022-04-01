@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="school.mapper.StudentMapper">
+	
+	<update id="setPwChange">
+		update student
+		set student_pw = #{studentPw}
+		where student_id = #{studentId}
+	</update>
+	
+	
+	
+	<delete id="setStudentDelete" parameterType="string">
+		delete from student 
+			   where student_Num = #{studentNum}
+		
+	</delete>
+	
+	<update id="setStudentUpdate" parameterType="studentDTO">
+		update student 
+		set		department_num = #{departmentNum}  , student_name  = #{studentName} ,
+				student_phone = #{studentPhone}  , student_email = #{studentEmail} 
+		where 	student_id =#{studentId} 
+	</update>
+	
+	<select id="getStudentSelectOne" parameterType="string" resultType="studentDTO">
+		select  student_num  studentNum , department_num departmentNum ,student_id studentId ,
+							 student_name studentName ,student_phone  studentPhone , student_email studentEmail
+		from student
+		where student_id = #{studentId}
+				
+	</select>
+	
+	<select id="getSdSelectAll" resultType="studentDTO">
+		select  student_num  studentNum , department_num departmentNum ,student_id studentId ,
+							 student_name studentName ,student_phone  studentPhone , student_email studentEmail
+				from student
+	
+	</select>
+	
+	<insert id="setStudentInsert" parameterType="studentDTO">
+		insert into student(student_num , department_num ,student_id , student_pw ,
+							 student_name ,student_phone , student_email )
+			values(#{studentNum} ,#{departmentNum} ,#{studentId} , #{studentPw} ,  #{studentName} , #{studentPhone} , #{studentEmail} )
+	
+	</insert>
+	
+	<select id="setStudentMaxNum" parameterType="string" resultType="string">
+		select to_char(sysdate,'yy') || #{departNum} || nvl(max(substr(student_num,-5)),10000) + 1 
+ 		  from student 
+  		 where department_num = #{departNum}
+	
+	</select>
+
+
+</mapper>

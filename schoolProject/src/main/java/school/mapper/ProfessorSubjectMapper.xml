@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="school.mapper.ProfessorSubjectMapper">
+	<delete id="setPSDelete" parameterType="professorSubjectDTO">
+	
+	
+		delete from professor_subject
+				
+				where  professor_num =#{professorNum} and subject_num =#{subjectNum}
+	
+	</delete>
+	
+	<update id="setProSubStateNull" parameterType="professorSubjectDTO">
+				update professor_subject
+				set state = null
+				where  professor_num =#{professorNum} and subject_num =#{subjectNum}
+	
+	
+	</update>	
+
+	
+	<update id="setProSubState" parameterType="professorSubjectDTO" >
+			update professor_subject
+				set state = '1'
+				where  professor_num =#{professorNum} and subject_num =#{subjectNum}
+	
+	</update>
+	
+	<select id="getProSubSelectAll" resultType="professorSubjectDTO">
+		select professor_num  professorNum, subject_num  subjectNum , state
+		from professor_subject
+	</select>
+
+	<insert id="setProSubInsert" parameterType="professorSubjectDTO">
+	
+		insert into  professor_subject ( professor_num ,subject_num )
+								values(#{professorNum} , #{subjectNum} )
+	</insert>
+
+
+</mapper>

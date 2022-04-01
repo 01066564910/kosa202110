@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="kosaShoppingMall.mapper.LoginMapper">
+	<select id="findPw" parameterType="kosaShoppingMall.command.FindPasswordCommand" resultType="String">
+		select 'mem' from member
+		where member_id = #{userId} 
+		and member_phone = #{userPhone} 
+		and member_email = #{userEmail}
+		union
+		select 'emp' from employees 
+		where emp_id = #{userId} 
+		and emp_phone = #{userPhone} 
+		and emp_Email = #{userEmail}
+	</select>
+	
+
+	<select id="findId" parameterType="string" resultType="authInfo">
+		select   member_Phone phone , member_id userId , member_email email
+		from member
+		where lower(member_email) =  lower(#{email})
+		union
+		select emp_phone phone , emp_id userId , emp_email email
+		from employees
+		where lower(emp_email) = lower(#{email})
+		
+	</select>
+	
+	<select id="UserLogin" resultType="authInfo" parameterType="string">
+	select MEMBER_ID userId , MEMBER_PW userPw , 'member' grade ,member_ok memberOk
+		 from member
+		 where member_id = #{userId}  
+		 union
+		 select EMP_ID userId , EMP_PW userPw ,'emp' grade , null
+		 from employees
+		 where emp_id =#{userId} 
+	
+	
+	</select>
+
+
+
+
+	
+	
+	
+
+</mapper>

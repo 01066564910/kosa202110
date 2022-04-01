@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="goodsRegist" method="post" name="frm" th:object="${goodsCommand}" enctype="multipart/form-data">
+<table border="1">
+	<tr><th>제품번호</th>
+		<td><input type="text" name="goodsNum" th:value="${goodsCommand.goodsNum}" />goods10001번 부터 자동 부여
+		<span th:if="${#fields.hasErrors('goodsNum')}" th:errors="*{goodsNum}"></span></td>
+	</tr>
+	<tr><th>상품명</th>
+		<td><input type="text" name="goodsName" /></td>
+		<span th:if="${#fields.hasErrors('goodsName')}" th:errors="*{goodsName}"></span><br/>
+	</tr>
+	<tr><th>상품 가격</th>
+		<td><input type="number" name="goodsPrice" min="1000" step="1000" value="1000" />
+		<span th:if="${#fields.hasErrors('goodsPrice')}" th:errors="*{goodsPrice}"></span></td>
+	</tr>
+	<tr><th>상품 내용</th>
+		<td><textarea rows="6" cols="30" name="goodsContent"></textarea>
+		<span th:if="${#fields.hasErrors('goodsContent')}" th:errors="*{goodsContent}"></span><br/></td>
+	</tr>
+	<tr><th>배송비</th>
+		<td><input type="number" name="deliveryCost" min="2000" step="500" value="2000"/>
+			<span th:if="${#fields.hasErrors('deliveryCost')}" th:errors="*{deliveryCost}"></span><br/></td>
+	</tr>
+	<tr><th>메인 이미지</th>
+		<td>
+			<input type="file" name="goodsMain"/>
+			<span th:if="${#fields.hasErrors('goodsMain')}" th:errors="*{goodsMain}"></span><br/>
+			<br/>	
+		</td>
+		<tr>
+		<th>이미지</th>
+		<td>
+			<input type="file" name="goodsImages" multiple="multiple"/>
+		</td>
+	</tr>
+	<tr>
+		<th colspan="2">
+			<input type="submit" value="상품등록">
+			<input type="reset" value="다시 작성">
+			<input type="button" value="상품리스트" onclick="javascript:location.href='goodsList'">
+		</th>
+	</tr>
+
+</table>
+</form>
+</body>
+</html>

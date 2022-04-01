@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="goodsReViewUpdate" method="post">
+	<img  th:src="|/goods/upload/${dto.goodsDTO.goodsMain}|" width="100"/><br/>
+	[[${dto.goodsDTO.goodsName}]] | 리뷰 등록일 [[${#dates.format(dto.reviewDTO.reviewDate,'yyy-MM-dd')}]]
+	<input type="hidden" name="goodsNum" value="${dto.goodsDTO.goodsNum}"/>
+	<input type="hidden" name="purchaseNum" th:value="${dto.reviewDTO.purchaseNum}"/>
+	
+		<table >
+			<tr><td>리뷰 작성</td>
+				<td><textarea rows="5" cols="30" name="reviewContent">
+					[[${dto.reviewDTO.reviewContent}]]
+				</textarea>
+			</tr>
+			<tr><td colspan="2"><input type="submit" value="리뷰 수정"/></td></tr>
+		</table>
+	</form>
+</body>
+</html>

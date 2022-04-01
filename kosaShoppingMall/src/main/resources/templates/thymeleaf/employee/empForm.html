@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.1.min.js"></script>
+<script type="text/javascript">
+$(function () {
+	$("#btn").click(function() {
+		$("#appd").append(
+				"<div id = 'appd'>졸업년도 : <input type='date' name='schoolYear'/>"
+				+"학교 : <input type='text' size='15' name='school'/>"
+				+"<button id='btn' onclick='del(this)' type='tutton'>삭제</button></div>");
+	});
+
+	
+	
+	$("#empEmail").keyup(function () {
+		$.ajax({
+			type: "post",
+			url : "emailCheck",
+			dataType : "text",
+			data:{"empEmail":$("#empEmail").val()},
+			success : function (result) {
+				$("#emailCheck").html(result);
+					if(result == "사용 가능한 email입니다."){
+						$("#emailCheck").css("color","blue");
+					}else{
+						$("#emailCheck").css("color","red");
+					
+				}
+			},
+			error : function () {
+				alert("코드레드 코드레드~ 돔 황 챠 ~ ")
+				return;
+			}
+		});
+	});
+	
+	$("#empId").keyup(function () {
+		$.ajax({
+			type : "post",
+			url : "idCheck",
+			dataType : "text",
+			data: {"empId":$("#empId").val()},
+			success : function (result) {
+				$("#idCheck").html(result);
+				if(result == "사용 가능한 id입니다."){
+					$("#idCheck").css("color","blue");
+				}else{
+					$("#idCheck").css("color","red");
+				}
+			},
+			error: function () {
+				alert('에러가 나왓따 훌훌훙~');
+				return;
+			}
+		});
+	});
+});
+function del(eee) {
+	$(eee).parent().remove();
+}
+</script>
+</head>
+<body>
+<form action ="empWrite" method="post" th:object="${employeeCommand}">
+아이디 : <input type="text" name="empId" id="empId"> 
+<span id="idCheck"></span><br/>
+<span th:if="${#fields.hasErrors('empId')}" th:errors="*{empId}"></span><br/>
+
+비밀번호 : <input type="password" name="empPw"> 
+<span th:if="${#fields.hasErrors('empPw')}" th:errors="*{empPw}"></span><br/>
+
+비밀번호 확인 : <input type="password" name="empPwCon"> 
+<span th:if="${#fields.hasErrors('empPwCon')}" th:errors="*{empPwCon}"></span><br/>
+
+이름 :<input type="text" name="empName">  
+<span th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></span><br/>
+
+주소 : <input type="text" name="empAddr"> 
+<span th:if="${#fields.hasErrors('empAddr')}" th:errors="*{empAddr}"></span><br/>
+
+연락처 : <input type="tel" name="empPhone">
+<span th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}"></span><br/>
+
+이메일 : <input type="email" name="empEmail" id="empEmail">
+<span id="emailCheck"></span><br/>
+<span th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}"></span><br/>
+학력 :
+	<div id = "appd">
+		졸업년도 : <input type="date" name="schoolYear"/>
+		학교  : <input type="text" size="15" name="school"/><button type="button" id="btn">추가</button>	
+	</div>
+<input type="submit" value="회원 가입"> 
+</form>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<style type="text/css">
+#body {
+	width: 1000px;
+}
+
+#leftMenu {
+	width: 25%;
+	float: left;
+	height: 500px;
+	margin-right: 50px;
+}
+
+#memberInfo {
+	float: left;
+	border-left: 1px solid gray;
+	padding-left: 50px;
+	height: 500px;
+}
+</style>
+</head>
+<body>
+	<div id="body">
+		<ul id="leftMenu">
+			<li><a href="memberInfo">내 정보 보기</a></li>
+			<li><a href="memberForm"> 내 정보 수정</a></li>
+			<li><a href="memberPw"> 비밀번호 수정</a></li>
+			<li><a href="memberUserDel">회원 탈퇴</a></li>
+		</ul>
+		<div id="memberInfo">
+			비밀번호 바꾸기<hr/>
+			<form action="memberPwCon" method="post" th:object=${memberCommand}>
+
+				<table border="1">
+					<tr>
+						<th><label for="memberPw">비밀번호</label></th>
+						<td><input type="password" name="memberPw" id="memberPw"
+							size="15" maxlength="12" /> <span
+							th:if="${#fields.hasErrors('memberPw')}" th:errors="*{memberPw}">
+						</span><br /></td>
+					</tr>
+					<tr>
+						<th><label for="newMemberPw">바꿀 비밀번호</label></th>
+						<td><input type="password" name="newMemberPw"
+							id="newMemberPw" size="15" maxlength="12" /> <span
+							th:if="${#fields.hasErrors('newMemberPw')}"
+							th:errors="*{newMemberPw}"> </span></td>
+					</tr>
+					<tr>
+						<th><label for="newMemberPwCon">바꿀 비밀번호확인</label></th>
+						<td><input type="password" name="newMemberPwCon"
+							id="newMemberPwCon" size="15" maxlength="12" /></td>
+					</tr>
+					<tr>
+						<th colspan="2"><input type="submit" value="비밀번호 바꾸기">
+						</th>
+					</tr>
+
+				</table>
+
+			</form>
+		</div>
+	</div>
+</body>
+</html>

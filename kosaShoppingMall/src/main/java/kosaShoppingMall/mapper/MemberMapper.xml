@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kosaShoppingMall.mapper.MemberMapper">
+		 	
+		 	
+		 	<delete id="goodsInquireDelete"  parameterType="string">
+		 		delete from goods_inquire
+		 		where inquire_Num = #{inquireNum}
+		 	
+		 	</delete>
+		 	
+		 	<delete id="reviewDelete"  parameterType="reviewDTO">
+		 		delete from review
+		 		where goods_num = #{goodsNum}and purchase_num = #{purchaseNum}
+		 	</delete>
+		 	
+		 	
+		 	
+		 	<update id="reviewUpdate" parameterType="reviewDTO">
+		 		update review
+		 		set review_Content = #{reviewContent}
+		 		where goods_num = #{goodsNum}and purchase_num = #{purchaseNum}
+		 	</update>
+		 	
+		 	
+		 	<resultMap type="goodsReviewDTO" id="goodsReviewResultMap">
+		 		<association property="goodsDTO" javaType="goodsDTO" resultMap="goodsResultMap"/>
+		 		<association property="reviewDTO" javaType="reviewDTO" resultMap="reviewResultMap"/>
+		 			
+		 	</resultMap>
+		 	
+		 	
+		 	
+		 	<resultMap type="reviewDTO" id="reviewResultMap">
+		 		<id column="review_num" jdbcType="BIGINT" property="reviewNum"/>
+		 		<id column="goods_num" jdbcType="VARCHAR" property="goodsNum"/>
+		 		<id column="purchase_num" jdbcType="VARCHAR" property="purchaseNum"/>
+		 		<result column="review_content" jdbcType="VARCHAR" property="reviewContent"/>
+		 		<result column="review_date" jdbcType="DATE" property="reviewDate"/>
+		 	</resultMap>
+		 	<select id="reviewSelect" parameterType="reviewDTO" resultMap="goodsReviewResultMap">
+		 		select g.goods_num , g.goods_name , g.goods_main , r.review_num , r.review_date , r.review_content , r.purchase_num
+		 		from goods g , review r , purchase p
+		 		where g.goods_num = r.goods_num 
+		 		and p.purchase_num = r.purchase_num
+		 		and p.member_num = #{memberNum} and r.goods_num =#{goodsNum} and r.purchase_num = #{purchaseNum}
+		 	
+		 	</select>
+		 
+		 
+	
+		 	<select id="purchaseDetail" parameterType="string" resultType="orderListDTO">
+				select g.goods_name goodsName, g.goods_main goodsMain, g.goods_content goodsContent, g.goods_price goodsPrice, g.delivery_cost deliveryCost, 
+				        pu.purchase_num purchaseNum, pu.purchase_date purchaseDate, pu.total_price totalPrice,
+				         pu.purchase_addr purchaseAddr , pu.purchase_phone purchasePhone, 
+				        pu.message message, pu.recieve_name recieveName, 
+				        pl.purchase_qty purchaseQty, pl.purchase_price purchasePrice, 
+				        pa.payment_kind paymentKind, pa.payment_price paymentPrice, pa.payment_date paymentDate, pa.card_number cardNumber
+				from payment pa right outer join purchase pu
+					     on pa.purchase_num = pu.purchase_num join purchase_list pl
+					     on pu.purchase_num = pl.purchase_num join goods g
+					     on pl.goods_num = g.goods_num
+				where pu.purchase_num = #{purchaseNum}     
+				
+			</select>
+		 	
+		 
+		 
+		 <delete id="puchaseDels" parameterType="hashMap">
+		 	delete from purchase
+		 		<where>
+		 			PURCHASE_NUM in
+		 			<foreach collection="purchaseNum" item="purchaseNums" index="index" open="(" close=")" separator=",">
+		 				#{purchaseNums}
+		 			</foreach>
+		 		</where>
+		 
+		 
+		 </delete>
+		 
+		<delete id="PurchaseDel" parameterType="string">
+			delete from purchase
+				where PURCHASE_NUM = #{purchaseNum}
+		
+		
+		</delete> 
+		
+		<update id="purchaseStatusBack" parameterType="string"> 
+			update purchase
+			set purchase_Status = '결제몬함'
+			where purchase_num = #{purchaseNum}
+		
+		
+		</update>
+		
+		<delete id="paymentDelete" parameterType="string">
+			delete from payment
+				where PURCHASE_NUM = #{purchaseNum}
+		
+		
+		</delete>
+		
+		
+		
+		<update id="purchaseStatus" parameterType="string"> 
+			update purchase
+			set purchase_Status = '결제완료'
+			where purchase_num = #{purchaseNum} 
+		
+		
+		</update>
+		
+	
+		<insert id="payment" parameterType="paymentDTO">
+			insert into payment(PURCHASE_NUM ,PAYMENT_KIND , PAYMENT_PRICE , PAYMENT_DATE  , CONFIRM_NUMBER , CARD_NUMBER)
+			values(#{purchaseNum} ,#{paymentKind} ,#{paymentPrice} , sysdate , #{confirmNumber} , #{cardNumber})
+		</insert>
+		<!--  같관계가 연결이 되지않아도 같은 정보를 가지고 있다면 할 수 있다. 정보를 갖고오기 위해서 조인을 한다. pk와 fk가 아니라고 하더라도 내가 갖고올 정보가 있더라도 얼마든지 조인을 할 수 있다. -->
+		<select id="orderList" parameterType="string" resultType="orderListDTO" >
+			select  pa.confirm_number confirmNumber , pu.purchase_num  purchaseNum
+			,pu.purchase_date  purchaseDate,   g.goods_Name  goodsName,g.goods_Num goodsNum , pu.purchase_status  purchaseStatus ,
+			 g.goods_main goodsMain , pu.Total_price totalPrice ,
+			 r.review_content reviewContent
+			from    payment pa  right outer join purchase pu  
+			on pa.purchase_num = pu.purchase_num join purchase_list pl   
+			on pu.purchase_num = pl.purchase_num left outer join review r 
+			on pl.purchase_num = r.purchase_num  and pl.goods_num = r.goods_num   join goods g  
+			on pl.goods_num = g.goods_num 
+			 where  pu.member_Num = #{memberNum}
+			order by pu.purchase_num desc
+		
+		</select>
+	
+	
+		<delete id="cartGoodsDel" parameterType="goodsBuy">
+			delete from cart
+			<trim prefix="where" suffixOverrides="AND|OR">
+			 member_num = #{memberNum}  and
+			 <if test="goodsNums != null"></if>
+				  goods_Num IN
+				 	<foreach collection="goodsNums" item="goodsNum" index="index" open="(" close=")" separator=",">
+				 		#{goodsNum}
+				 	</foreach>
+			</trim>	
+		
+		</delete>
+	
+	
+	<!--  서비스에서 구매 갯수만큼 들어와야 하기떄문에 반복문을 사용한것이다. -->
+		<insert id="purchaseList" parameterType="purchaseListDTO">
+			inser                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            into purchase_List(PURCHASE_NUM , GOODS_NUM , PURCHASE_QTY , PURCHASE_PRICE)
+			select 		 #{purchaseNum}, c.goods_num , cart_Qty , cart_qty * goods_Price	
+			from cart c , goods g
+			where c.goods_num = g.goods_num and c.goods_num = #{goodsNum} 
+										    and c.member_num = #{memberNum}
+		</insert>
+	
+	
+		<insert id="purchase" parameterType="kosaShoppingMall.domain.PurchaseDTO">
+			insert into purchase(PURCHASE_NUM , PURCHASE_DATE  , TOTAL_PRICE , PURCHASE_ADDR , PURCHASE_PHONE
+								, MESSAGE , PURCHASE_STATUS , MEMBER_NUM , RECIEVE_NAME)
+			values (#{purchaseNum} , sysdate , #{totalPrice} , #{purchaseAddr} , 
+					#{purchasePhone} , #{message} , #{purchaseStatus} ,#{memberNum} ,#{recieveName}  )
+			
+		
+		
+		
+		</insert>
+	
+	
+		<delete id="cartDel" parameterType="goodsBuy">
+			delete from cart  
+			<trim prefix="where" suffixOverrides="AND|OR">
+			member_Num =#{memberNum} and
+			 goods_num in
+		<foreach collection="goodsNums" item="goodsNum" open="(" close=")" separator="," >
+			#{goodsNum} 
+		</foreach>
+		
+		</trim>
+		</delete>	
+		
+	<select id="goodsOrder" parameterType="goodsBuy" resultMap="GoodsCartResultMap">
+	
+		select goods_main , g.goods_num , goods_name , delivery_cost , cart_qty , cart_qty*goods_price total_price
+		from goods g , cart c 
+		where g.goods_Num = c.goods_num  and   member_num = #{memberNum}
+		and g.goods_Num in
+		<foreach collection="goodsNums" item="goodsNum" index="index" open="(" close=")" separator=",">
+			#{goodsNum}
+		</foreach>
+	</select>
+	
+	<update id="goodsCartQtyDown" parameterType="kosaShoppingMall.domain.CartDTO">
+		update cart
+		set cart_qty = cart_qty -1
+		where member_num = #{memberNum} and goods_num = #{goodsNum} 
+	
+	
+	</update>
+	
+	
+	<resultMap type="kosaShoppingMall.domain.GoodsDTO" id="goodsResultMap">
+		<id column="GOODS_NUM" jdbcType="VARCHAR" property="goodsNum" />
+		<result column="Goods_Main" jdbcType="VARCHAR" property="goodsMain"/>
+		<result column="GOODS_NAME" jdbcType="VARCHAR" property="goodsName"/>
+		<result column="DELIVERY_COST" jdbcType="VARCHAR" property="deliveryCost"/>
+	</resultMap>
+	<resultMap type="cartDTO" id="cartResultMap">
+		<id column="GOODS_NUM" jdbcType="VARCHAR" property="goodsNum"/>
+		<result column="CART_QTY" jdbcType="BIGINT" property="cartQty"/>
+		<result column="total_Price" jdbcType="BIGINT" property="totalPrice"/>
+		
+	</resultMap>
+	
+	<resultMap type="GoodsCartDTO" id="GoodsCartResultMap">
+		<association property="goodsDTO" javaType="kosaShoppingMall.domain.GoodsDTO" resultMap="goodsResultMap"  />
+		<association property="cartDTO" javaType="cartDTO" resultMap="cartResultMap"/>
+	
+	</resultMap>
+	
+	
+	<select id="cartList" parameterType="string" resultMap="GoodsCartResultMap">
+		select GOODS_MAIN , g.GOODS_NUM , GOODS_NAME , DELIVERY_COST , CART_QTY , CART_QTY * GOODS_PRICE total_Price
+			from goods g  , cart c
+		where g.goods_Num = c.goods_num  and   member_num = #{memberNum}
+	</select>
+	
+	
+	
+	<update id="joinOkUpdate" parameterType="memberDTO">
+		update member
+		set member_ok =#{memberOk}
+		where member_id=#{memberId} 
+			 and member_email =#{memberEmail} 
+			 and member_ok is null
+	
+	</update>
+	
+	
+	
+	<update id="changePw" parameterType="authInfo">
+		update member
+		set member_pw = #{userPw}
+		where member_id =#{userId}
+	</update>
+	
+	<select id="memberCount" resultType="int" parameterType="string">
+		select count(*) from member
+		<where>
+			<if test="memberSearch != null">
+				member_id like '%'||#{memberSearch}||'%'
+				 	or memberName like '%'||#{memberSearch}||'%'
+			</if>
+		</where>
+		
+	</select>
+	
+	
+	
+
+	<!-- memberMyPage -->
+	
+	
+	<delete id="memberDeletes" parameterType="string" >
+		delete from member
+		where member_Id =#{userId}
+		
+	</delete>
+
+	<update id="myPageMemberPw" parameterType="memberDTO" >
+		update member
+		set  member_pw =#{memberPw}
+	where member_id =#{memberId}
+	</update>
+	
+
+
+	<update id="myPageMemberUpdate" parameterType="memberDTO" >
+		update member
+		set   member_Name=#{memberName} , 
+	member_Addr =#{memberAddr}, gender=#{gender}  ,
+	member_Phone =#{memberPhone} , member_Birth =#{memberBirth},  member_Email = #{memberEmail}
+	where member_id =#{memberId}
+	</update>
+
+
+
+		<select id="myMemberSelectOne" resultType="memberDTO" parameterType="string">
+			select member_Num  memberNum, member_Id  memberId , member_Name memberName, 
+	member_Addr memberAddr, gender gender ,MEMBER_REGIST memberRegist ,
+	member_Phone memberPhone , member_Birth memberBirth,  member_Email memberEmail
+	from member
+	where member_id = #{userId}
+	</select>
+
+
+	<insert id="memberJoinInsert" parameterType="memberDTO">
+	insert into member (member_num , member_Id , member_Pw ,member_Name, 
+	member_Addr, MEMBER_REGIST ,gender ,member_Phone ,
+	 member_Birth,  member_Email)
+	values(
+	 (<include refid="memberMaxNum"/>), #{memberId}, #{memberPw}, #{memberName}, #{memberAddr}
+	 ,sysdate , #{gender}, #{memberPhone}
+	  , #{memberBirth}, #{memberEmail}  )
+	</insert>
+
+	
+	
+	<sql id="memberMaxNum" >
+	
+    select concat('kosa',nvl(max(substr(member_num,5)), 100000) + 1)
+   from member
+
+	</sql>
+
+	 
+	 <!-- member  -->
+
+	<delete id="memberDel" parameterType="hashMap">
+	
+		delete from member
+		<where>
+			member_Num in
+			<foreach collection="memberNum" index="index" item="Num" open="("  close=")" separator="," > 
+				#{Num}
+			</foreach>
+		</where>
+	
+	</delete>
+
+	<delete id="memberDelete" parameterType="String" >
+		delete from member
+		where member_Num =#{memberNum}
+		
+	</delete>
+	
+
+
+	<update id="memberUpdate" parameterType="memberDTO" >
+		update member
+		set member_Id =#{memberId}  , member_Name=#{memberName} , 
+	member_Addr =#{memberAddr}, MEMBER_REGIST =#{memberRegist} ,gender=#{gender}  ,
+	member_Phone =#{memberPhone} , member_Birth =#{memberBirth},  member_Email =#{memberEmail}
+	where member_Num =#{memberNum}
+	</update>
+	
+	<!--  setter를 사용하는 맵 -->
+	<resultMap type="memberDTO" id="memberResultMap">
+		<id column="member_Num" jdbcType="VARCHAR" property="memberNum"/>
+		<result column="member_Id"  jdbcType="VARCHAR" property="memberId" />
+		<result column="member_Pw"  jdbcType="VARCHAR" property="memberPw" />
+		<result column="member_Name"  jdbcType="VARCHAR" property="memberName" />
+		<result column="member_Addr"  jdbcType="VARCHAR" property="memberAddr" />
+		<result column="MEMBER_REGIST"  jdbcType="DATE" property="memberRegist" />
+		<result column="gender"  jdbcType="VARCHAR" property="gender" />
+		<result column="member_Phone"  jdbcType="VARCHAR" property="memberPhone" />
+		<result column="member_Birth"  jdbcType="DATE" property="memberBirth" />
+		<result column="member_Email"  jdbcType="VARCHAR" property="memberEmail" />
+	</resultMap>
+	<!--  생성자를 통해서 값을 저장하는 방법 -->
+
+	<resultMap type="memberDTO" id="memberConstructoResultMap">
+		<constructor>
+			<idArg column="member_Num" javaType="string" />
+			<arg column="member_Id" javaType="string"/>
+			<arg column="member_Pw" javaType="string"/>
+			<arg column="member_Name" javaType="string"/>
+			<arg column="member_Addr" javaType="string"/>
+			<arg column="MEMBER_REGIST" javaType="java.util.Date"/>
+			<arg column="gender" javaType="string"/>
+			<arg column="member_Phone" javaType="string"/>
+			<arg column="member_Birth" javaType="java.util.Date"/>
+			<arg column="member_Ok" javaType="string"/>
+			<arg column="member_Email" javaType="string"/>
+			
+		</constructor>
+	</resultMap>
+
+	 
+	
+	<select id="memberSelectOneId" parameterType="string" resultType="memberDTO">
+			select member_Num  memberNum, member_Id  memberId , member_Pw memberPw ,member_Name memberName, 
+		member_Addr memberAddr, MEMBER_REGIST memberRegist ,gender gender ,
+		member_Phone memberPhone , member_Birth memberBirth,  member_Email memberEmail
+	from member 
+	where member_id = #{userId}
+	
+	
+	</select>
+	
+	<select id="memberSelectOne" parameterType="string" resultMap="memberConstructoResultMap">
+		select  member_Num  , member_Id   , member_Pw  ,member_Name , 
+				member_Addr , MEMBER_REGIST  ,gender  ,
+				member_Phone  , member_Birth ,  member_Email  , member_Ok
+		from member
+		where member_Num = #{memberNum}
+	
+	</select>
+
+ 
+ <!--  setter를 쓰는 방법 -->
+ <!-- 
+	<select id="memberSelectOne" parameterType="string" resultType="memberDTO">
+			select member_Num  memberNum, member_Id  memberId , member_Pw memberPw ,member_Name memberName, 
+	member_Addr memberAddr, MEMBER_REGIST memberRegist ,gender gender ,
+	member_Phone memberPhone , member_Birth memberBirth,  member_Email memberEmail
+	from member
+	where member_Num = #{memberNum}
+	
+	
+	</select> -->
+<!--                              새로한거 20-10일 페이징                                    -->
+		<select id="memberSelectAll" resultType="memberDTO" parameterType="startEndPageDTO">
+		select * from(
+			select rownum rn , member_Num  memberNum, member_Id  memberId , member_Pw memberPw ,member_Name memberName, 
+				member_Addr memberAddr, MEMBER_REGIST memberRegist ,gender gender ,
+				member_Phone memberPhone , member_Birth memberBirth,  member_Email memberEmail
+			from member
+			<where>
+				<if test="goodsWord != null">
+					member_Name like '%'||#{goodsWord}||'%'
+				 	or member_id like '%'||#{goodsWord}||'%'
+				</if>
+			</where>
+			)
+			
+		where rn between #{startRow} and #{endRow}
+	</select>
+
+	<insert id="memberInsert" parameterType="memberDTO" >
+	insert into member ( member_Num ,member_Id , member_Pw ,member_Name, 
+	member_Addr, MEMBER_REGIST ,gender ,member_Phone , member_Birth,  member_Email)
+	values(
+	 #{memberNum}, #{memberId}, #{memberPw}, #{memberName}, #{memberAddr}
+	 ,#{memberRegist}, #{gender}, #{memberPhone}
+	  , #{memberBirth}, #{memberEmail}  )
+	</insert>
+
+
+	<select id="memberMaxNum" resultType="string">
+
+   select concat('kosa',nvl(max(substr(member_num,5)), 100000) + 1)
+   from member
+
+	</select>
+
+<sql id="baseColumns">member_Num  memberNum, member_Id  memberId , member_Name memberName, 
+	member_Addr memberAddr, gender gender ,
+	member_Phone memberPhone , member_Birth memberBirth,  member_Email memberEmail</sql>
+	
+</mapper>
+

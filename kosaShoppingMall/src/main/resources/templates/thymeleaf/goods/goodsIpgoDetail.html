@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+제품번호 : [[${goodsIpgoGoodsCommand.goodsDTO.goodsNum}]]<br/>
+제품 명 : [[${goodsIpgoGoodsCommand.goodsDTO.goodsName}]]<br/>
+가격 : [[${goodsIpgoGoodsCommand.goodsDTO.goodsPrice}]]<br/>
+내용 : [[${goodsIpgoGoodsCommand.goodsDTO.goodsContent}]]<br/>
+배송비 : [[${goodsIpgoGoodsCommand.goodsDTO.deliveryCost}]]<br/>
+조회수 : [[${goodsIpgoGoodsCommand.goodsDTO.visitCount}]]<br/>
+입고 일 : [[${goodsIpgoGoodsCommand.goodsIpgoDTO.ipgoDate}]]<br/>
+입고 수량 : [[${goodsIpgoGoodsCommand.goodsIpgoDTO.ipgoQty}]]<br/>
+제조일 : [[${goodsIpgoGoodsCommand.goodsIpgoDTO.madeDate}]]<br/>
+<a a th:href="@{goodsIpgoModify(goodsNum=${goodsIpgoGoodsCommand.goodsDTO.goodsNum},
+				ipgoDate=${#dates.format(goodsIpgoGoodsCommand.goodsIpgoDTO.ipgoDate,'yyyy-MM-dd')})}">수정</a>||
+<a a th:href="@{goodsIpgoDelte(goodsNum=${goodsIpgoGoodsCommand.goodsDTO.goodsNum},
+				ipgoDate=${#dates.format(goodsIpgoGoodsCommand.goodsIpgoDTO.ipgoDate,'yyyy-MM-dd')})}">삭제</a>
+</body>
+</html>

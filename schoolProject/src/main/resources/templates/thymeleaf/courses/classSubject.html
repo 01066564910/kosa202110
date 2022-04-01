@@ -1,0 +1,22 @@
+<select id="subjectNum" name="subjectNum">
+	<option value="0">-------선택해 주세요 ------ </option>
+	<th:block th:each= "dto : ${list}">
+	
+	<option th:value="${dto.subjectNum}">[[${dto.subjectName}]]</option>
+	</th:block>
+</select>
+<script type="text/javascript">
+$(function () {
+	$("#subjectNum").change(function name() {
+		$.ajax({
+			type:"post",
+			url : "professorList",
+			dataType :"html",
+			data:{"subjectNum": $("#subjectNum").val()},
+			success: function (result) {
+				$("#cDTO").html(result);
+			}
+		});
+	});
+});
+</script>

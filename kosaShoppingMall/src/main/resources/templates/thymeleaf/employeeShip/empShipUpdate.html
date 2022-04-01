@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.1.min.js"></script>
+<script type="text/javascript">
+/*$(function () {
+	$("#empEmail").keyup(function () {
+	 
+	});
+});*/
+</script>
+</head>
+<body>
+<form action ="empUpdate" method="post" th:object="${employeeCommand}">
+<input type="hidden" name="empPwCon" value="115" />
+
+
+아이디 : <input type="text" name="empId" th:value="${employeeCommand.empId}" readonly="readonly" > 
+
+<span th:if="${#fields.hasErrors('empId')}" th:errors="*{empId}"></span><br/>
+
+비밀번호 : <input type="password" name="empPw" > 
+<span th:if="${#fields.hasErrors('empPw')}" th:errors="*{empPw}"></span><br/>
+
+
+이름 :<input type="text" name="empName" th:value="${employeeCommand.empName}">  
+<span th:if="${#fields.hasErrors('empName')}" th:errors="*{empName}"></span><br/>
+
+주소 : <input type="text" name="empAddr" th:value="${employeeCommand.empAddr}"> 
+<span th:if="${#fields.hasErrors('empAddr')}" th:errors="*{empAddr}"></span><br/>
+
+연락처 : <input type="tel" name="empPhone" th:value="${employeeCommand.empPhone}">
+<span th:if="${#fields.hasErrors('empPhone')}" th:errors="*{empPhone}"></span><br/>
+
+이메일 : <input type="email" name="empEmail" th:value="${employeeCommand.empEmail}">
+<span th:if="${#fields.hasErrors('empEmail')}" th:errors="*{empEmail}"></span><br/>
+
+<input type="submit" value="회원 수정"> 
+</form>
+</body>
+</html>

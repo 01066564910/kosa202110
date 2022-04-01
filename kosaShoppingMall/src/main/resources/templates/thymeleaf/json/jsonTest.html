@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.1.min.js"></script>
+<script>
+
+$(function(){
+   $("#joinOk").bind("click",function(){
+      $.ajax({
+         type:"post",
+         data :{"id" :$("#id").val()},
+         url :"ajax1",
+         // responseData  컨트롤러로 부터 받아오기위한 변수명 
+         success : function(responseData) {
+			var data = JSON.parse(responseData);
+			if(!data){
+				alert("데이터가 없습니다.");
+				return false;
+			}
+			var html = "이름 :"+data.memberName
+			 	html +="주소 :" +data.memberAddr;
+			$("#contaioner").html(html);
+		}
+         
+      });
+   });
+   
+});
+</script>
+</head>
+<body>
+<!-- div 데이터 뿌려주기 위한 영역  -->
+<div id="contaioner"></div>
+   <input type="text" id="id">
+   <button id ="joinOk"> response사용</button>
+   <button onclick="javascript:history.back();">뒤로가기</button>
+
+</body>
+</html>

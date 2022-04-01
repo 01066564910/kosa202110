@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<p align="center">상품조회
+			<form action="majorList" method="get"  >
+				<input  type="search" name="searchWord" size="50" />
+				<input type="submit" value="검색">
+			</form>
+		</p>
+	<table border="1" width="600" align="center">
+		<tr><td colspan="4" align="right"><a href="departmentWrite">학과 등록</a></td></tr>
+		<tr><td>학과 번호</td><td>학과 이름</td><td>학과 전화번호</td><td>삭제</td></tr>
+		
+		<th:block th:each="departmentDTO:${list}">
+		<tr><td><a th:href="|departmentUpdate/${departmentDTO.departmentNum}|">[[${departmentDTO.departmentNum}]]</a></td>
+			<td>[[${departmentDTO.departmentName}]] </td>
+		
+			<td>[[${departmentDTO.departmentPhone}]] </td>
+			<td rowspan="2"><a th:href="@{departmentDel(num=${departmentDTO.departmentNum})}">삭제</a> </td>
+		<tr>
+			<td colspan="3">학과 주소 :[[${departmentDTO.depatymentAddr}]] </td>
+			
+		</tr>
+		</th:block>
+		<th colspan="6">
+			<th:block th:if="${page<=1}">
+				[이전]
+			</th:block>
+			<th:block th:if="${page>1}">
+	   		<a th:href="@{majorList(page=${page -1} ,searchWord =${searchWord})}">
+	   			[이전]
+	   		</a>
+	   		</th:block>
+	   		<th:block th:each="i : ${#numbers.sequence(startPage , endPage)}">
+	   			[<a th:href="@{majorList(page=${i }  ,searchWord =${searchWord})}">[[${i}]]</a>]
+	   		</th:block>
+	   		<th:block th:if="${page <maxPage}">
+	   			<a th:href="@{majorList(page=${page+1} ,searchWord =${searchWord})}">[이후]</a>
+	   		</th:block>
+	   		<th:block th:if="${page>=maxPage}">
+	   			[이후]
+	   		</th:block>
+		</th>
+		
+	</table>
+</body>
+</html>

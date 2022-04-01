@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+#box {
+	width: 1200px;
+}
+
+#leftMenu {
+	width: 20%;
+	float: left;
+	height: 500px;
+	margin-right: 50px;
+}
+
+#memberInfo {
+	float: left;
+	border-left: 1px solid gray;
+	padding-left: 50px;
+	height: 500px;
+}
+</style>
+</head>
+<body>
+	<div id="box">
+		<ul id="leftMenu">
+			<li><a href="goodsList">상품 리스트</a></li>
+			<li><a href="goodsRegist">상품 등록</a></li>
+			<li><a href="goodsIpgoList">상품 입고 현황</a></li>
+			<li><a href="goodsIpgo">상품입고</a></li>
+			<li><a href="purchaseList">주문 내역</a>
+			<li><a href="goodsQuestion">상품 문의</a></li>
+		</ul>
+		<div id="memberInfo">
+			상품관리<br> <a href="goodsRegist">상품등록</a><br>
+			<p>상품조회
+			<form action="goodsList" method="get">
+				<input type="search" name="goodsWord" size="50" /><input
+					type="submit" value="검색">
+			</form>
+			</p>
+			<form action="goodsDels" method="get">
+				<table border="1" width="800">
+					<tr>
+						<th colspan="4">상품 리스트</th>
+						<th width="150">상품 개수 :[[${count}]]</th>
+					</tr>
+
+					<tr>
+						<th>번호</th>
+						<th>상품 번호</th>
+						<th>이미지</th>
+						<th>상품명</th>
+						<th>가격</th>
+						<th>조회수</th>
+						<th><input type="submit" value="삭제" /></th>
+					</tr>
+
+					<th:block th:each="goodsCommand , idx : ${list}">
+						<tr>
+							<th>[[${idx.count}]]</th>
+							<th><a th:href="|goodsDetail/${goodsCommand.goodsNum}|">[[${goodsCommand.goodsNum}]]</a></th>
+							<th><img alt="안뜸" th:src="|/goods/upload/${goodsCommand.goodsMain}|" width="50" height="50" ></th>
+							<th>[[${goodsCommand.goodsName}]]</th>
+							<th>[[${goodsCommand.goodsPrice}]]</th>
+							<th>[[${goodsCommand.visitCount}]]</th>
+							<th><input type="checkbox"
+								th:value="${goodsCommand.goodsNum}" name="delete" /></th>
+						</tr>
+					</th:block>
+					<tr>
+						<td colspan="6"><th:block th:if="${page <=1}">
+				  			[이전]
+				  	</th:block> <th:block th:if="${page >1}">	<!-- 이게 있어야 페이지를 눌렀을 ㄸㅒ 에러가 안뜸 -->
+				  			<a th:href="@{goodsList(page=${page -1})}">[이전]</a>
+				  	</th:block>
+				  	<th:block th:each=" i : ${#numbers.sequence(startPage , endPage)}">
+				  			[<a th:href="@{goodsList(page=${i })}">[[${i}]]</a>]
+				  	</th:block>
+				  	<th:block  th:if="${page <maxPage}"> 
+				  			<a th:href="@{goodsList(page=${page+1})}">[이후]</a>
+				  	</th:block>
+				  	<th:block th:if="${page>=maxPage}">
+							[이후]		
+					</th:block></td>
+					</tr>
+					
+				</table>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

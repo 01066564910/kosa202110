@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+function itemSend(goodsNum) {
+		// 부모창에있는 아이디가 num인 애에다가 goodsNum을 넘겨주겠다.
+		// 자바스크립트 opener.document.getElementById('num').value = goodsNum;
+		// j쿼리 방식
+		
+		$(opener.document).find("#num").val(goodsNum);
+		//윈도우 창을 닫아주겠다.
+		window.self.close();
+};
+</script>
+</head>
+<body>
+	<p>
+	<table width="600">
+		<tr>
+			<th>
+				<form action="goodsItem" method="post">
+					상품명 : <input type="search" name="goodsWord" size="50" /> <input
+						type="submit" value="검색" />
+				</form>
+			</th>
+		</tr>
+	</table>
+	</p>
+	<table border=1 width="600">
+		<tr>
+			<th colspan="3">상품 리스트</th>
+			<th width="100">상품 개수 :</th>
+		</tr>
+		<tr>
+			<th>상품 번호</th>
+			<th>상품명</th>
+			<th>가격</th>
+			<th>조회수</th>
+		</tr>
+		<th:block th:each="goodsCommand : ${list}">
+			<tr>
+				<th><a
+					th:href="|javascript:itemSend('${goodsCommand.goodsNum}')|">[[${goodsCommand.goodsNum}]]</a></th>
+				<th>[[${goodsCommand.goodsName}]]</th>
+				<th>[[${goodsCommand.goodsPrice}]]</th>
+				<th>[[${goodsCommand.visitCount}]]</th>
+			</tr>
+		</th:block>
+		<tr>
+			<td colspan="5"><th:block th:if="${page <=1}">
+				  			[이전]
+				  	</th:block> <th:block th:if="${page >1}">
+				  			[<a th:href="@{goodsList(page=${page -1},goodsWord=${goodsWord})}">이전</a>]
+				  	</th:block> 
+				  	<th:block
+							th:each=" i : ${#numbers.sequence(startPage , endPage)}">
+				  			[<a th:href="@{goodsList(page=${i },goodsWord=${goodsWord})}">[[${i}]]</a>]
+				  	</th:block> 
+				  	<th:block th:if="${page <maxPage}">
+							<a th:href="@{goodsList(page=${page+1},goodsWord=${goodsWord})}">[이후]</a>
+					</th:block> 
+					<th:block th:if="${page>=maxPage}">
+							[이후]		
+					</th:block></td>
+		</tr>
+	</table>
+</body>
+</html>

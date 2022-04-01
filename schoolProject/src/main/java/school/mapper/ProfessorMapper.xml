@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="school.mapper.ProfessorMapper">
+	
+	<update id="setPwChange" parameterType="professorDTO" >
+		update professor
+		set professor_pw  =#{professorPw}
+		where professor_id = #{professorId}
+		
+	</update>
+	
+	<select id="getProMypageSelectOne" parameterType="string" resultType="professorDTO" >
+		select professor_num professorNum ,professor_name professorName ,  professor_phone  professorPhone, professor_email professorEmail ,
+								 professor_id professorId , professor_pw professorPw , department_num departmentNum
+		from professor
+		where professor_id = #{userId}
+	
+	
+	</select>
+	
+	
+	<delete id="setProDel" parameterType="string">
+		delete from professor
+		where professor_num = #{num}
+		
+	
+	</delete>
+	
+	<update id="setPfUpdate" parameterType="professorDTO">
+		update professor
+		set professor_name =#{professorName}  ,  professor_phone  =#{professorPhone} , professor_email =#{professorEmail}  ,
+								 professor_id =#{professorId}   , department_num  =#{departmentNum} 
+		where professor_Num =#{professorNum}
+	
+	</update>
+	
+	
+	<select id="getPfSelectOne" resultType="professorDTO" parameterType="string">
+		select professor_num professorNum ,professor_name professorName ,  professor_phone  professorPhone, professor_email professorEmail ,
+								 professor_id professorId , professor_pw professorPw , department_num departmentNum
+		from professor
+		where professor_num = #{professorNum}
+	
+	
+	</select>
+	
+	<select id="getPfSelectAll" resultType="professorDTO" >
+		select  professor_num professorNum ,professor_name professorName ,  professor_phone  professorPhone, professor_email professorEmail ,
+								 professor_id professorId , professor_pw professorPw , department_num departmentNum
+		from professor
+	
+	</select>
+	
+	<insert id="setProInsert" parameterType="professorDTO">
+		insert into professor( professor_num ,professor_name ,  professor_phone , professor_email ,
+								 professor_id , professor_pw , department_num)
+					values (#{professorNum} , #{professorName} , #{professorPhone} , #{professorEmail} ,
+								#{professorId}   , #{professorPw} , #{departmentNum} )
+				
+	</insert>
+	
+	
+	<select id="setProMaxNum" resultType="string">
+	 select concat('tea_',nvl(max(substr(professor_num , 5)),1000000)+1)  from  professor
+	
+	</select>
+	
+	
+	
+
+</mapper>

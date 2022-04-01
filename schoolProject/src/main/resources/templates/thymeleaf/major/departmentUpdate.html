@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="../departmentUpdate" method="post">
+	<table border="1">
+		<tr><td>학과 번호</td>
+			<td><input type="text" th:value="${departmentCommand.departmentNum}" readonly="readonly" name="departmentNum" ></td></tr>
+		<tr><td>학과 이름</td>
+			<td><input type="text" th:value="${departmentCommand.departmentName}" name="departmentName"> </td></tr>
+		<tr><td>학과 전화번호</td>
+			<td><input type="tel" th:value="${departmentCommand.departmentPhone}" name="departmentPhone"> </td></tr>
+		<tr><td>학과 주소</td>
+			<td><input type="text" th:value="${departmentCommand.depatymentAddr}" name="depatymentAddr"> </td></tr>
+		<tr align="center"><td colspan="2">
+			<input type="submit" value="학과 수정"> </td></tr>
+	</table>
+</form>
+</body>
+</html>

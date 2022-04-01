@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="school.mapper.DepartmentMapper">
+
+	<select id="selectProfessor" parameterType="string" resultType="professorDTO">
+		select professor_name  professorName , professor_Phone  professorPhone, professor_email  professorEmail ,
+					 professor_id  professorId, professor_pw professorPw , professor_Num  professorNum, department_num departmentNum
+		from professor
+		where professor_num in (select professor_num from professor_subject where subject_num =#{subjectNum})
+	
+	</select>
+
+
+	<select id="getSelectSubject" parameterType="string" resultType="subjectDTO">
+	
+		select subject_num  subjectNum , subject_name subjectName , subject_title subjectTitle , subject_content subjectContent
+		from subject
+		where subject_num in(select distinct subject_num from professor_subject
+								where professor_num in( select professor_num from professor 
+								where department_num = #{departmentNum}))
+		
+	
+	
+	
+	
+	</select>
+	
+	<select id="getDepartmentCount" resultType="int" parameterType="string">
+		select count(*) from department
+		<where>
+			<if test="searchWord != null">
+				department_name like '%'||#{searchWord}||'%'
+			</if>
+		</where>
+	
+	</select>
+	
+	
+	<select id="getDepartmentSelectPage" resultType="departmentDTO" parameterType="startEndPageDTO">
+		select * from(
+		select rownum rn , department_num departmentNum ,  department_name  departmentName ,  
+				department_phone departmentPhone , depatyment_addr depatymentAddr
+		from department
+		<where>
+			<if test="searchWord != null">
+				department_name like '%'||#{searchWord}||'%'
+			</if>
+		</where>
+		
+		)
+		where rn between #{startRow} and #{endRow}
+	 </select>
+
+
+	<delete id="setDepartmentDelete" parameterType="string">
+		delete from department
+		where department_num = #{departmentNum}
+	</delete>
+	<update id="setDepartmentUpdate" parameterType="departmentDTO">
+		update department
+		set  department_name =  #{departmentName} ,  department_phone =  #{departmentPhone}  , depatyment_addr  =  #{depatymentAddr}
+		where  department_num = #{departmentNum}
+	</update>
+	
+	
+	
+	<select id="getDepartmentSelectOne" resultType="departmentDTO"  parameterType="string">
+		select department_num departmentNum ,  department_name  departmentName ,  department_phone departmentPhone , depatyment_addr depatymentAddr
+		from department
+		where department_num = #{departmentNum}
+	</select>
+	
+	
+	
+
+	<select id="getDepartmentSelect" resultType="departmentDTO">
+		select department_num departmentNum ,  department_name  departmentName ,  department_phone departmentPhone , depatyment_addr depatymentAddr
+		from department
+	
+	 </select>
+
+
+	
+	<insert id="setDepartmentInsert" parameterType="departmentDTO">
+		insert into department(department_num ,  department_name ,  department_phone , depatyment_addr )
+			   values(#{departmentNum} , #{departmentName} , #{departmentPhone} ,  #{depatymentAddr} )
+	</insert>
+	
+	
+	
+	<select id="departmentMaxNum"  resultType="string">
+		select sql_num10.nextval
+  		 from dual
+	</select>
+</mapper>

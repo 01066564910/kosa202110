@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="findPassword" method="post" th:object="${findPasswordCommand}">
+	
+	<table>
+		<tr><th>아이디</th>
+			<td><input type="text" name="userId"/>
+			<span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}" style="color:red"></span></td>
+		</tr>
+		<tr><th>연락처</th>
+			<th><input type="text" name="userPhone"/>
+			<span th:if="${#fields.hasErrors('userPhone')}" th:errors="*{userPhone}" style="color:red"></span></th>
+		</tr>
+		<tr><th>이메일</th>
+			<th><input type="text" name="userEmail"/></th>
+		</tr>
+		<tr><input type="submit" name="임시 비밀번호 보기"/> </tr>
+	</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE HTML>
+<!--
+	Industrious by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Industrious by TEMPLATED</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link rel="stylesheet" href="/static/assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a class="logo" href="/">Industrious</a>
+				<nav>
+					<a href="#menu">Menu</a>
+				</nav>
+			</header>
+
+		<!-- Nav -->
+	<nav id="menu">
+		<ul class="links">
+			<th:block th:if="${session.authInfo != null}">
+				<th:block th:switch="${session.authInfo.grade}">
+					<th:block th:case="emp">
+						<li><a href="/">Home</a></li>
+						<li><a href="/emp/empList">직원 관리</a></li>
+						<li><a href="/member/memberList">회원 관리</a></li>
+						<li><a href="/goods/goodsList">상품 관리</a></li>
+						<li><a href="/empMypage/empDetail">직원 내 정보보기</a></li>
+						<li><a href="/login/logout">로그아웃</a></li>
+					</th:block>
+						<th:block th:case="member">
+							<li><a href="/">Home</a></li>
+							<li><a href="cart/orderList">주문목록</a></li>
+							<li><a href="/cart/goodsCartList">장바구니</a></li>
+							<li><a href="/mypage/memberInfo">내 정보 보기</a></li>
+							<li><a href="/login/logout">로그아웃</a></li>
+						</th:block>
+					
+					
+				</th:block>
+			</th:block>
+		</ul>
+	</nav>
+
+	<!-- Banner -->
+	<section id="banner">
+		<div class="inner">
+			<h1>Industrious</h1>
+			<p>
+				A responsive business oriented template with a video background<br />
+				designed by <a href="https://templated.co/">TEMPLATED</a> and
+				released under the Creative Commons License.
+			</p>
+		</div>
+		<video autoplay loop muted playsinline src="images/banner.mp4"></video>
+	</section>
+
+	<!-- Highlights -->
+	<section class="wrapper">
+		<div class="inner">
+			<th:block th:if="${session.authInfo == null}">
+				<table align="center" border=1>
+					<form action="/login/loginPro" name="frm" method="post"
+						th:object="${loginCommand}">
+						<tfoot>
+							<tr>
+								<td colspan="3"><a href="/register/agree">회원가입</a>&nbsp; <a
+									href="/help/findId">아이디 찾기</a>&nbsp; <a
+									href="/help/findPassword">비밀번호 찾기</a></td>
+							</tr>
+						</tfoot>
+						<thead>
+							<tr>
+								<td colspan="3">자동 로그인
+								<input type="checkbox" name="autuLogin" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--  isId가 있으면 체크드 없으면 안되는것  -->
+								<label for="checkbox-beta">자동 로그인</label></td>	
+									<input type="checkbox" name="idStore" th:checked="${isId}" />
+									<label for="checkbox-beta">아이디저장</label></td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>아이디</td>
+								<td><input type="text" name="userId" id="userId"
+									placeholder="아이디 입력" th:if="${isId !=null}" th:value="${isId}">
+									<input type="text" name="userId" id="userId"
+									placeholder="아이디 입력" th:if="${isId ==null}"
+									th:value="${loginCommand.userId}"> <span
+									th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
+								</td>
+								<!-- src="@{/static/images/img1.jpg -->
+								<td rowspan="2"><input type="image" width="80px"
+									height="80px" src="/static/images/s_img2.jpg" id="imgSubmit">
+								</td>
+							</tr>
+							<tr>
+								<td>비밀번호</td>
+								<td><input type="password" placeholder="비밀번호 입력"
+									name="userPw"> <!-- command에서 userPw의 에러가 발생하면 거기에 있는 메세지가 발생하는 이벤트. -->
+									<span th:if="${#fields.hasErrors('userPw')}"
+									th:errors="*{userPw}"></span></td>
+							</tr>
+						</tbody>
+					</form>
+				</table>
+			</th:block>
+		</div>
+	</section>
+
+	<!-- CTA -->
+			<section id="cta" class="wrapper">
+				<div class="inner">
+					<h2>Curabitur ullamcorper ultricies</h2>
+					<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing. Lorem ipsum dolor vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing sed feugiat eu faucibus. Integer ac sed amet praesent. Nunc lacinia ante nunc ac gravida.</p>
+				</div>
+			</section>
+
+		<!-- Testimonials -->
+			<section class="wrapper">
+				<div class="inner">
+							<table align="center" >
+		<tr>
+			<th:block th:each=" goodsDTO , idx : ${lists}">
+				<td>
+					<a th:href="@{/corner/prodInfo(goodsNum=${goodsDTO.goodsNum})}">
+						<img alt="" th:src="|/goods/upload/${goodsDTO.goodsMain}|" width="200" height="200" /><br/>
+						[[${goodsDTO.goodsName}]]<br/>
+						가격 : [[${#numbers.formatCurrency(goodsDTO.goodsPrice)}]]
+					</a>
+				</td>
+				<th:block th:if="${idx.count % 3 == 0}" th:utext="'</tr><tr>'" />
+			</th:block>
+		</tr>
+	</table>
+							</div>
+						</section>
+						<section>
+							<div class="content">
+								<blockquote>
+									<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>
+								</blockquote>
+								<div class="author">
+									<div class="image">
+										<img src="images/pic03.jpg" alt="" />
+									</div>
+									<p class="credit">- <strong>John Doe</strong> <span>CEO - ABC Inc.</span></p>
+								</div>
+							</div>
+						</section>
+						<section>
+							<div class="content">
+								<blockquote>
+									<p>Nunc lacinia ante nunc ac lobortis ipsum. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus.</p>
+								</blockquote>
+								<div class="author">
+									<div class="image">
+										<img src="images/pic02.jpg" alt="" />
+									</div>
+									<p class="credit">- <strong>Janet Smith</strong> <span>CEO - ABC Inc.</span></p>
+								</div>
+							</div>
+						</section>
+					</div>
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<div class="content">
+						<section>
+							<h3>Accumsan montes viverra</h3>
+							<p>Nunc lacinia ante nunc ac lobortis. Interdum adipiscing gravida odio porttitor sem non mi integer non faucibus ornare mi ut ante amet placerat aliquet. Volutpat eu sed ante lacinia sapien lorem accumsan varius montes viverra nibh in adipiscing. Lorem ipsum dolor vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing sed feugiat eu faucibus. Integer ac sed amet praesent. Nunc lacinia ante nunc ac gravida.</p>
+						</section>
+						<section>
+							<h4>Sem turpis amet semper</h4>
+							<ul class="alt">
+								<li><a href="#">Dolor pulvinar sed etiam.</a></li>
+								<li><a href="#">Etiam vel lorem sed amet.</a></li>
+								<li><a href="#">Felis enim feugiat viverra.</a></li>
+								<li><a href="#">Dolor pulvinar magna etiam.</a></li>
+							</ul>
+						</section>
+						<section>
+							<h4>Magna sed ipsum</h4>
+							<ul class="plain">
+								<li><a href="#"><i class="icon fa-twitter">&nbsp;</i>Twitter</a></li>
+								<li><a href="#"><i class="icon fa-facebook">&nbsp;</i>Facebook</a></li>
+								<li><a href="#"><i class="icon fa-instagram">&nbsp;</i>Instagram</a></li>
+								<li><a href="#"><i class="icon fa-github">&nbsp;</i>Github</a></li>
+							</ul>
+						</section>
+					</div>
+					<div class="copyright">
+						&copy; Untitled. Photos <a href="https://unsplash.co">Unsplash</a>, Video <a href="https://coverr.co">Coverr</a>.
+					</div>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="/static/assets/js/jquery.min.js"></script>
+			<script src="/static/assets/js/browser.min.js"></script>
+			<script src="/static/assets/js/breakpoints.min.js"></script>
+			<script src="/static/assets/js/util.js"></script>
+			<script src="/static/assets/js/main.js"></script>
+
+	</body>
+</html>

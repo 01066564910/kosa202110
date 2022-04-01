@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="school.mapper.CoursesSubjectMapper">
+	
+	<select id="getIntegrityCk" parameterType="coursesSubjectDTO" resultType="integrityCk">
+	select  professor_num professorNum , subject_num subjectNum ,student_num studentNum 
+		from courses_subject
+	 where professor_num =#{professorNum} and  subject_num =#{subjectNum} and student_num = #{studentNum}
+	</select>
+	<delete id="setCSDelete" parameterType="coursesSubjectDTO">
+		delete from courses_subject
+		where professor_num =#{professorNum} and  subject_num =#{subjectNum} and student_num = #{studentNum}
+	
+	</delete>
+	
+	
+	<resultMap type="coursesSubjectDTO" id="cSStateDTO">
+		<id column="professor_num" jdbcType="VARCHAR" property="professorNum"/>
+		<id column="subject_num" jdbcType="VARCHAR" property="subjectNum"/>
+		<id column="student_num" jdbcType="VARCHAR" property="studentNum"/>
+		<result column="cnt" jdbcType="VARCHAR" property="cnt"/>
+		<association property="professorSubjectDTO" javaType="professorSubjectDTO">
+			<id column="professor_num" jdbcType="VARCHAR" property="professorNum"/>
+			<id column="subject_num" jdbcType="VARCHAR" property="subjectNum"/>
+			<result column="state" jdbcType="CHAR" property="state"/>
+		</association>
+		<association property="professorDTO" javaType="professorDTO">
+			<result column="professor_Name" jdbcType="VARCHAR" property="professorName"/>
+		</association>
+		<association property="subjectDTO" javaType="subjectDTO">
+			<result column="subject_Name" jdbcType="VARCHAR" property="subjectName"/>
+		</association>
+		<association property="departmentDTO" javaType="departmentDTO">
+			<result column="department_Name" jdbcType="VARCHAR" property="departmentName"/>
+		</association>
+	</resultMap>
+	
+	<select id="getCoursesSubjectSelectAll" parameterType="string" resultMap="cSStateDTO">
+		 select   c.professor_num , c.subject_num , c.student_num , state  , pr.professor_name ,d.department_name , su.subject_name, 
+		 		  count(c.subject_num) over(PARTITION BY c.subject_num  ) cnt
+	     from  courses_subject c join  professor_subject p
+	        on   c.subject_num = p.subject_num and c.professor_num = p.professor_num and c.student_num =#{studentNum} join student s
+	        on   c.student_num = s.student_num join department d 
+	        on   s.department_num = d.department_num   join professor pr
+	        on   c.professor_num = pr.professor_num join subject su
+	        on   su.subject_num = c.subject_num 
+	</select>
+	
+	<insert id="setCSInsert" parameterType="coursesSubjectDTO">
+		insert into courses_subject (professor_num ,subject_num , student_num  )
+		values( #{professorNum} ,  #{subjectNum} , #{studentNum} )
+		
+	</insert>
+	
+ </mapper>

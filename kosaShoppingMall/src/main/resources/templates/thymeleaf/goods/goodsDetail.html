@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script language='javascript'>
+
+function noEvent() {
+    if (event.keyCode == 116) {
+        event.keyCode= 2;
+        return false;
+    }
+    else if(event.ctrlKey && (event.keyCode==78 || event.keyCode == 82))
+    {
+        return false;
+    }
+}
+document.onkeydown = noEvent;
+</script>
+
+<style type="text/css">
+#leftMenu {
+	width: 25%;
+	float: left;
+	height: 500px;
+	margin-right: 50px;
+}
+
+#memberInfo {
+	float: left;
+	border-left: 1px solid gray;
+	padding-left: 50px;
+	height: 500px;
+}
+</style>
+</head>
+<body>
+	<ul id="leftMenu">
+		<li><a href="../goodsList">상품 리스트</a></li>
+		<li><a href="../goodsRegist">상품 등록</a></li>
+		<li><a href="../goodsIpgo">상품입고</a></li>
+		<li><a href="../purchaseList">주문 내역</a>
+		<li><a href="../goodsQuestion">상품 문의</a></li>
+	</ul>
+	<div id="memberInfo">
+		상세보기 페이지 상품 번호: [[${goodsCommand.goodsNum}]] || 조회수 :[[${goodsCommand.visitCount}]]<br /> 
+		
+		상품 이름: [[${goodsCommand.goodsName}]]<br />
+		 상품 가격: [[${goodsCommand.goodsPrice}]]<br /> 						<!--  \n		  <br> -->
+		상품 내용: <span th:utext="${#strings.replace(goodsCommand.goodsContent, newLineChar ,'&lt;br /&gt;')}"></span><br /> 
+		상품 배송비 : [[${goodsCommand.deliveryCost}]]<br /> 
+		<th:block th:if="${goodsCommand.goodsMain} !=null">
+		대문 이미지 : <img alt="" th:src="|/goods/upload/${goodsCommand.goodsMain}|" width="100" ><hr/>
+		</th:block>
+	
+											<!--  스플릿 하면 다 배열로 바뀐다. -->
+		<th:block th:each="goodsImage : ${#strings.arraySplit(goodsCommand.goodsImages,'`')}">
+			<br/>
+			이미지:<img th:src="|/goods/upload/${goodsImage}|" width="100"/><hr/>
+		</th:block>
+		
+		<a th:href="@{../goodsModify(goodsNum=${goodsCommand.goodsNum})}">수정</a>
+		|| <a th:href="@{../goodsDels(delete=${goodsCommand.goodsNum})}">삭제</a>
+	</div>
+
+</body>
+</html>

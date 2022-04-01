@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.1.min.js"></script>
+<script type="text/javascript">
+$(function () {
+	
+	$("#memberEmail").keyup(function () {
+		$.ajax({
+			type : "post",
+			url : "emailCheck",
+			dataType:"text",
+			data : {"memberEmail" :$("#memberEmail").val(),"memberId" :$("#memberId").val()},
+			success : function (result){
+				$("#emailCheck").html(result);
+				if(result == "사용 가능한 이메일 입니다."){
+					$("#emailCheck").css("color" , "blue");
+				}else{
+					$("#emailCheck").css("color" , "red");
+				}
+			},error : function () {
+				alert("코드에러 코드에러");
+				return;
+			}
+			
+		});
+	});
+});
+</script>
+<style type="text/css">
+span{color:red; 
+	 font-size:10px;
+	 font-family:돋움;}
+p{color:green;
+  font-size:15px;
+  }
+
+
+</style>
+</head>
+<body> 
+<form action="memberModify" method="post" th:object=${memberCommand}>
+ <input type="hidden" name="memberPw" id="memPw" th:value="123"/>
+ <input type="hidden" name="memberPwCon" th:value="123"/>
+ 
+회원 번호 : <input type="text" name="memberNum" readonly="readonly" 
+         th:value="${memberCommand.memberNum}"/>:번호 자동부여<br />
+<p>회원 아이디 : <input type="text" name="memberId"  id="memberId" th:value="${memberCommand.memberId}" readonly="readonly"/><br />
+<span id="idCheck"></span>
+<span th:if="${#fields.hasErrors('memberId')}" th:errors="*{memberId}"  ></span><br/></p>
+
+<p>회원 이름 : <input type="text" name="memberName" th:value="${memberCommand.memberName}"/>
+<span th:if="${#fields.hasErrors('memberName')}" th:errors="*{memberName}"></span><br /></p>
+
+<p>회원 주소 : <input type="text" name="memberAddr" th:value="${memberCommand.memberAddr}">
+<span th:if="${#fields.hasErrors('memberAddr')}" th:errors="*{memberAddr}"></span><br/></p>
+
+<p>등록일 : <input type="date" name="memberRegist"  th:value="${#dates.format(memberCommand.memberRegist,'yyyy-MM-dd')}"/>
+<span th:if="${#fields.hasErrors('memberAddr')}" th:errors="*{memberAddr}"></span><br/></p>
+
+<p>성별 : <input type="radio" name="gender" value="F" checked="${memberCommand.gender=='F'}"/>여자
+      <input type="radio" name="gender" value="M" checked="${memberCommand.gender=='M'}"/>남자
+<span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span><br/></p>
+
+<p>연락처 : <input type="tel" name="memberPhone" placeholder="031-1234-1234" th:value="${memberCommand.memberPhone}">
+      <span th:if="${#fields.hasErrors('memberPhone')}" th:errors="*{memberPhone}"></span><br/></p>
+      
+<p>생년월일 : <input type="date" name="memberBirth"  th:value="${#dates.format(memberCommand.memberBirth,'yyyy-MM-dd')}"/>
+<span th:if="${#fields.hasErrors('memberBirth')}" th:errors="*{memberBirth}"></span><br/></p>
+
+<p>이메일 : <input type="email" name="memberEmail" id="memberEmail" th:value="${memberCommand.memberEmail}">
+<span id="emailCheck"></span>
+<span th:if="${#fields.hasErrors('memberEmail')}" th:errors="*{memberEmail}"></span><br/></p>
+<input type="submit" value="회원 수정" />
+</body>
+</html>

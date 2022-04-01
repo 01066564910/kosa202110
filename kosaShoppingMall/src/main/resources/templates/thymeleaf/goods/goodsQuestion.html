@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div id="wrapper">
+	<ul id="leftMenu">
+		<li><a href="goodsList">상품 리스트</a></li>
+		<li><a href="goodsRegist">상품 등록</a></li>
+		<li><a href="goodsIpgoList">상품 입고 현황</a></li>
+		<li><a href="goodsIpgo">상품입고</a></li>
+		<li><a href="purchaseList">주문 내역</a>
+		<li><a href="goodsQuestion">상품 문의</a></li>
+	</ul>
+	<div id="memberInfo">
+		<table border=1>
+			<tr><td>상품명</td><td>종류</td><td>제목</td><td>작성자</td><td>상태</td></tr>
+				
+			<tr th:each="goodsInquireDTO : ${list}">
+				<td>[[${goodsInquireDTO.goodsDTO.goodsName}]]</td><td>[[${goodsInquireDTO.inquireKind}]]</td>
+				<td><a th:href="|goodsInquireDetail/${goodsInquireDTO.inquireNum}|">[[${goodsInquireDTO.inquireSubject}]]</a></td>
+				<td>[[${goodsInquireDTO.memberNum}]]</td>
+				<td></td>
+				<td th:if="${goodsInquireDTO.inquireAnswer == null}">답변 준비중</td>
+				<td th:if="${goodsInquireDTO.inquireAnswer != null}">답변 비중</td>
+			</tr>
+		</table>
+	</div>
+</div>
+</body>
+</html>

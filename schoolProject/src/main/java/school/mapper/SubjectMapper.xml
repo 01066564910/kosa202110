@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="school.mapper.SubjectMapper">
+	
+	<update id="setSjUpdate" parameterType="subjectDTO">
+		update subject 
+		set  subject_name =#{subjectName}  , subject_title  =#{subjectTitle}  , subject_content   =#{subjectContent}
+		where subject_num = #{subjectNum}
+	
+	</update>
+	
+	<delete id="setSjDelete" parameterType="string">
+		delete from subject 
+		where subject_num =#{num}
+	
+	</delete>
+	
+	<select id="getSjSelectOne" resultType="subjectDTO"  parameterType="String">
+		select subject_num  subjectNum ,subject_name subjectName , subject_title subjectTitle , subject_content  subjectContent
+	 	from subject
+		where subject_num=#{subjectNum}
+	</select>
+
+	<select id="getSjSelect" resultType="subjectDTO"> 
+	 select subject_num  subjectNum ,subject_name subjectName , subject_title subjectTitle , subject_content  subjectContent
+	 from subject
+	
+	</select>
+
+	<insert id="setSjInsert" parameterType="subjectDTO">
+		insert into subject(subject_num ,subject_name , subject_title , subject_content  )
+					values(#{subjectNum} , #{subjectName} , #{subjectTitle} , #{subjectContent})
+	
+	</insert>
+
+
+	<select id="setSjMaxNum" resultType="string"> 
+   select nvl(max(subject_num),10 )+1
+		from  subject
+	</select>
+
+</mapper>

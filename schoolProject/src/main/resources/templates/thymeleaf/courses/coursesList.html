@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.js"></script>
+<script type="text/javascript">
+function subjectDetail(as) {
+	window.open("/subject/subcjectDetail?num="+as , "subjectDetail" , "width=620 , height=500,left=100,top=100" );
+};
+
+function choiSungHo(){
+	$("#frm").ajaxSubmit({
+		type : "post",
+		datatype : "html",
+		beforeSubmit:function(){
+			if($("#aDTO").children().val() == '0'){
+				alert("a");
+				$("#aDTO").children().focus();
+				return false;
+			}
+			if($("#bDTO").children().val() == '0'){
+				alert("b");
+				$("#bDTO").children().focus();
+				return false;
+			}
+			if($("#cDTO").children().val() == '0'){
+				alert("c");
+				$("#cDTO").children().focus();
+				return false;
+			}
+		},
+		success : function (result) {
+			if(result.trim() == "1"){
+				alert("수강 신청을 성공했습니다.");
+				window.location.reload();
+			}else if(result.trim() == "5"){
+				alert("수강 신청이 이미 되었습니다.")
+			}else if(result.trim() == "10"){
+				alert("로그아웃 되었습니다.");
+			}else{
+				alert("수강 신청이 안되었습니다.");
+			}
+					
+			
+		}
+		
+			
+	});
+}
+
+$(function () {
+	var op = '<select><option value="0">-------교수를 선택해 주세요 ------ </option></select>';
+	$("#departmentNum").change(function () {
+		$.ajax({
+			type : "post",
+			data: {"departmentNum" : $("#departmentNum").val()},
+			datatype : "html",
+			url : "classSubject",
+			
+			success : function (result) {
+					$("#bDTO").html(result);
+					$("#cDTO").html(op);
+					
+			}
+			
+		});
+	});
+});
+
+
+
+</script>
+</head>
+<body>
+<form action="coursesSubject" method="post" id="frm" >
+	<table>
+		<tr><th>학과</th><th>과목</th><th>교수</th><th>등록</th></tr>
+		<tr>
+			<td>
+				<div id="aDTO" >
+					<select id="departmentNum" name="departmentNum">
+						<option value="0">-------학과를 선택해 주세요 ------ </option>
+						<th:block th:each="dto :${list}" >
+						<option th:value="${dto.departmentNum}">[[${dto.departmentName}]]</option>
+					</select>
+				</div>
+			</td>
+			<td>
+				<div id="bDTO"   >
+					<select name="subjectNum">
+						<option value="0">-------과목을 선택해 주세요 ------ </option>
+					</select>
+				</div>
+			</td>
+			<td>
+				<div id="cDTO">
+					<select name="professorNum">
+						<option value="0">-------교수를 선택해 주세요 ------ </option>
+					</select>
+				</div>
+			</td>
+			<td>
+				<!--  <input type="button" value="수강 신청" onclick="choiSungHo();" />  -->
+				<input type="submit" value="수강 신청">
+			</td>
+		</tr>
+		
+	</table>
+	
+</form>
+<br/><br/>
+<table border="1">	
+		<tr><th>학생 학과</th><th>과목</th><th>교수</th><th>수강취소</th><th>폐강여부</th><th>과목 조회</th><th>수강 인원 수</th></tr>
+		<th:block th:each="dto : ${cSList}">
+		<tr>
+			<td>[[${dto.departmentDTO.departmentName}]]</td>
+			<td>
+			 <a th:attr="href=|javascript:subjectDetail('${dto.subjectNum}');|">[[${dto.subjectDTO.subjectName}]]</a></td>
+			<td>[[${dto.professorDTO.professorName}]]</td><td><a th:href="@{couSubDelete(studentNum=${dto.studentNum},subjectNum=${dto.subjectNum},professorNum=${dto.professorNum})}">취소하기</a></td>
+			<th:block th:if="${dto.professorSubjectDTO.state != '1'}">
+				<td>폐강아님</td>
+			</th:block>
+			<th:block th:if="${dto.professorSubjectDTO.state == '1'}">
+				<td>폐강됐음</td>
+				</th:block>
+				<td><button th:attr="onclick=|subjectDetail('${dto.subjectNum}');|">과목 조회</button></td>
+				<td>[[${dto.cnt}]]</td>
+				
+			
+		</tr>
+		</th:block>
+		
+</table>
+</body>
+</html>

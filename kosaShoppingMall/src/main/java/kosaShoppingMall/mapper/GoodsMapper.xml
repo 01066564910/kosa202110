@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kosaShoppingMall.mapper.GoodsMapper">
+	
+
+	 
+	 
+
+	<select id="getWishSelectOne" resultType="string" parameterType="memberDTO" >
+		 select '1'
+ 		 from wish 
+	     where member_num = #{memberNum} and goods_num = #{goodsDTO.goodsNum}
+		
+	
+	</select>
+	
+	<update id="setGoodsInquireUpdate" parameterType="goodsInquireDTO">
+		update goods_inquire
+		set  INQUIRE_SUBJECT = #{inquireSubject}  ,  INQUIRE_CONTENT = #{inquireContent}   ,  INQUIRE_KIND   = #{inquireKind}  , ANSWER_EMAIL   = #{answerEmail}
+		where INQUIRE_NUM = #{inquireNum}
+	
+	</update>
+	
+	
+	
+	<select id="goodsinquireUpdate" parameterType="string" resultMap="goodsInquireAnswerResultMap">
+		select inquire_num , g.goods_num , MEMBER_NUM , INQUIRE_SUBJECT , INQUIRE_CONTENT , INQUIRE_KIND ,  goods_name
+    from goods_inquire gi  join goods g
+    on  gi.goods_num = g.goods_Num
+    where gi.inquire_num = #{inquireNum}
+	
+	</select>
+	
+	<update id="setInquireAnswer" parameterType="goodsInquireDTO" >
+		update goods_inquire
+		set inquire_answer = #{inquireAnswer},
+			answer_Date = sysdate
+		where inquire_num = #{inquireNum}
+	
+	</update>
+	
+	
+	<resultMap type="goodsInquireDTO" id="goodsInquireAnswerResultMap">
+		<id column="goods_Num" jdbcType="VARCHAR" property="goodsNum"/>
+		<id column="inquire_Num" jdbcType="VARCHAR" property="inquireNum"/>
+		<id column="member_Num" jdbcType="VARCHAR" property="memberNum"/>
+		<result column="inquire_Subject" jdbcType="VARCHAR" property="inquireSubject"/>
+		<result column="inquire_Content" jdbcType="VARCHAR" property="inquireContent"/>
+		<result column="inquire_Kind" jdbcType="VARCHAR" property="inquireKind"/>
+		<result column="inquire_answer" jdbcType="VARCHAR" property="inquireAnswer"/>
+		<result column="inquire_Date" jdbcType="VARCHAR" property="inquireDate"/>
+		<result column="answer_Date" jdbcType="VARCHAR" property="answerDate"/>
+		<result column="answer_Email" jdbcType="VARCHAR" property="answerEmail"/>
+		<association property="goodsDTO" javaType="goodsDTO">
+			<result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
+		</association>
+	
+	
+	</resultMap>
+	
+	<select id="goodsInquire" parameterType="string" resultMap="goodsInquireAnswerResultMap">
+		select goods_name , inquire_num , gi.goods_num , member_num , inquire_subject , inquire_content , inquire_kind , inquire_answer , inquire_date
+				answer_date , answer_email
+		from  goods g , goods_inquire gi
+		where g.goods_num = gi.goods_num
+		<if test="inquireNum !=null">
+			and Inquire_num =#{InquireNum}
+		</if>
+	
+	</select>
+	
+	<resultMap type="goodsInquireDTO" id="goodsInquireResultMap">
+		<id column="goodsNum" jdbcType="VARCHAR" property="goodsNum"/>
+		<id column="inquireNum" jdbcType="VARCHAR" property="inquireNum"/>
+		<id column="member_Num" jdbcType="VARCHAR" property="memberNum"/>
+		<result column="inquireSubject" jdbcType="VARCHAR" property="inquireSubject"/>
+		<result column="inquireContent" jdbcType="VARCHAR" property="inquireContent"/>
+		<result column="inquireKind" jdbcType="VARCHAR" property="inquireKind"/>
+		<result column="inquireDate" jdbcType="VARCHAR" property="inquireDate"/>
+		<result column="answerDate" jdbcType="VARCHAR" property="answerDate"/>
+		<result column="answerEmail" jdbcType="VARCHAR" property="answerEmail"/>
+		<association property="memberDTO" javaType="memberDTO">
+			<result column="memberId" jdbcType="VARCHAR" property="memberId"/>
+		</association>
+	
+	
+	</resultMap>
+	
+	<select id="goodsInquireList" resultMap="goodsInquireResultMap" parameterType="string">
+		select inquire_Num inquireNum , inquire_Kind  inquireKind, inquire_Subject inquireSubject, inquire_Date inquireDate ,member_Id  memberId ,
+				inquire_Content inquireContent , inquire_Answer inquireAnswer
+			from goods_inquire gi join member m
+				 on gi.member_Num = m.member_Num 
+			where goods_Num = #{goodsNum}
+			order by inquireNum desc
+	
+	
+	</select>
+	
+	<insert id="goodsinquireWrite" parameterType="goodsInquireDTO"  >
+		insert into goods_inquire (INQUIRE_NUM ,GOODS_NUM , MEMBER_NUM ,
+		 			INQUIRE_SUBJECT , INQUIRE_CONTENT  ,inquire_Kind , INQUIRE_DATE , answer_Email)
+		values((seq_num.nextval )  ,
+				#{goodsNum} , #{memberNum} , #{inquireSubject}  , #{inquireContent}  ,#{inquireKind}   , sysdate , #{answerEmail})
+		
+	</insert>
+	
+	
+	<resultMap type="reviewDTO" id="reviewResultMap">
+		<id column="review_Num" jdbcType="BIGINT" property="reviewNum"/>
+		<id column="goods_num"  jdbcType="VARCHAR" property="goodsNum"/>
+		<id column="reviewDate" jdbcType="DATE" property="reviewDate"/>
+		<result column="score" jdbcType="BIGINT" property="score"/>
+		<result column="reviewContent" jdbcType="VARCHAR" property="reviewContent"/>
+		<result column="purchaseNum" jdbcType="VARCHAR" property="purchaseNum"/>
+		<result column="memberNum" jdbcType="VARCHAR" property="memberNum"/>
+		<association property="memberDTO" javaType="memberDTO">
+			<result column="memberId" jdbcType="VARCHAR" property="memberId"/>
+		</association>
+	
+	</resultMap>
+	
+	
+	<select id="reviewList" resultMap="reviewResultMap" parameterType="String"> 
+		select  SCORE score  , REVIEW_DATE  reviewDate , REVIEW_CONTENT reviewContent  ,m.member_id  memberId
+		   from review r , purchase p , member m
+   		where	 r.purchase_num = p.purchase_num  and p.member_num = m.member_num
+   				and	  r.goods_num = #{goodsNum}
+	
+	</select>
+	
+	<insert id="reviewWrite" parameterType="reviewDTO">
+		insert into review(REVIEW_NUM ,GOODS_NUM , REVIEW_DATE ,SCORE ,REVIEW_CONTENT , purchase_Num)
+		values(seq_num.nextval , #{goodsNum} , sysdate , 5 ,#{reviewContent},#{purchaseNum} )
+	
+	
+	</insert>
+	
+	<delete id="deliveryDelete" parameterType="string">
+		delete from delivery
+		where purchase_Num =#{purchaseNum}
+	</delete>
+	
+	<update id="empDeliveryUpdate"  parameterType="deliveryDTO">
+		update delivery
+		set DELIVERY_NUMBER = #{deliveryNumber} , DELIVERY_COMPANY = #{deliveryCompany}
+		where purchase_Num =#{purchaseNum}
+	
+	</update>
+	
+	<insert id="deliveryInsert" parameterType="kosaShoppingMall.command.DeliveryCommand">
+		insert into delivery(PURCHASE_NUM , DELIVERY_NUMBER , DELIVERY_COMPANY)
+		values (#{purchaseNum} , #{deliveryNumber} , #{deliveryCompany})
+	</insert>
+	<update id="deliveryStatus" parameterType="string">
+		update purchase 
+		set purchase_status = '배송완료'
+		where purchase_num = #{purchaseNum}  and purchase_status = '상품준비중'
+	</update>
+	
+	
+	<update id="statusUpdate" parameterType="string">
+		update purchase
+		set purchase_status = '상품준비중'
+		where purchase_num = #{purchaseNum} and purchase_status = '결제완료'
+	</update>
+	<!--  left는 오른쪽이 널이여도 왼쪽을 다 출력하라는것이고 right는 왼쪽이 널이여도 오른쪽을 다 출력해라 이다. -->
+	<select id="purchaseEmpDetail" resultType="orderListDTO">
+		select g.goods_name goodsName, g.goods_main goodsMain, g.goods_content goodsContent, g.goods_price goodsPrice, g.delivery_cost deliveryCost, 
+				        pu.purchase_num purchaseNum, pu.purchase_date purchaseDate, pu.total_price totalPrice,
+				         pu.purchase_addr purchaseAddr , pu.purchase_phone purchasePhone, 
+				        pu.message message, pu.recieve_name recieveName, 
+				        pl.purchase_qty purchaseQty, pl.purchase_price purchasePrice, 
+				        pa.payment_kind paymentKind, pa.payment_price paymentPrice, pa.payment_date paymentDate, pa.card_number cardNumber ,
+						d.delivery_number deliveryNumber , d.delivery_company deliveryCompany
+				from payment pa right outer join purchase pu
+					     on pa.purchase_num = pu.purchase_num left outer join delivery d
+					     on pu.purchase_num = d.purchase_num  join purchase_list pl
+					     on pu.purchase_num = pl.purchase_num join goods g
+					     on pl.goods_num = g.goods_num 
+				where pu.purchase_num = #{purchaseNum} 
+	</select>
+
+
+	<select id="purchaseList" resultType="orderListDTO">
+		select  pa.confirm_number confirmNumber , pu.purchase_num  purchaseNum
+			,pu.purchase_date  purchaseDate,   g.goods_Name  goodsName,   pu.purchase_status  purchaseStatus ,
+			 g.goods_main goodsMain , pu.Total_price totalPrice
+			from    payment pa  right outer join purchase pu  
+			on pa.purchase_num = pu.purchase_num join purchase_list pl  
+			on pu.purchase_num = pl.purchase_num join goods g  
+			on pl.goods_num = g.goods_num 
+	</select>
+	
+	<!-- 												오류를 알수있따	 -->
+	<insert id="cartAdd" parameterType="cartDTO" useGeneratedKeys="false" >
+		merge into cart c
+		using (select goods_num from goods where goods_num = #{goodsNum})g
+		on (c.goods_num = g.goods_num and c.member_num = #{memberNum})
+		when matched then
+			update set c.cart_qty = c.cart_qty + #{cartQty}
+		when not matched then
+			insert (c.member_num , c.goods_num , c.cart_qty)
+			values(#{memberNum} , #{goodsNum} , #{cartQty}) 
+	</insert>
+
+
+
+	<update id="wishAdd" parameterType="wishDTO">
+		 merge into wish w
+		 using (select goods_num from goods where goods_num = #{goodsNum}) g
+		 on (w.goods_num = g.goods_num and w.member_num = #{memberNum})
+		 when matched then
+		 	   update set wish_date = sysdate
+		 	   delete where w.goods_num = #{goodsNum} and w.member_Num = #{memberNum}
+		 when not matched then
+		 	insert (w.goods_num , w.member_Num , w.wish_date)
+		 	values (#{goodsNum} , #{memberNum} , sysdate)
+	</update>
+	<select id="wishCount" parameterType="wishDTO" resultType="string">
+		select count(*) from wish
+		where goods_num = #{goodsNum} and member_Num = #{memberNum}
+	
+	
+	</select>
+
+
+	<select id="goodsSelect" resultType="goodsDTO" parameterType="hashMap"> 
+		select goods_Num  goodsNum , goods_Name  goodsName,
+			   goods_Price goodsPrice , goods_Content  goodsContent, delivery_Cost  deliveryCost ,
+			    visit_Count visitCount,
+			   GOODS_MAIN goodsMain , GOODS_IMAGES goodsImages ,
+			    GOODS_ORIGINAL goodsOriginal ,GOODS_MAIN_ORG goodsMainOrg
+			   from goods
+			   <where>
+			   	Goods_num in
+			   <foreach collection="goodsNums" item="goodsNum" index="index" open="(" close=")" separator=",">
+			   		#{goodsNum}
+			   </foreach>
+			   </where>	
+	</select>
+	
+	
+	
+	<!--             @alie준 그 리네임도 된다. -->
+	<resultMap type="kosaShoppingMall.domain.GoodsDTO" id="goodsIpgoGoodsMap">
+		<!--  멤버필드일 경우에는 association을 적지않고  그냥 적으면 되고 멤버필드에 클래스가 있으면 association을 갖고와서 적으면 된다. -->
+		<id column="goods_num" jdbcType="VARCHAR" property="goodsNum"/>
+		<result column="goods_price" jdbcType="VARCHAR" property="goodsName"/>
+		<result column="goods_price" jdbcType="BIGINT" property="goodsPrice"/>
+		<result column="goods_Content" jdbcType="VARCHAR" property="goodsContent"/>
+		<result column="DELIVERY_COST" jdbcType="BIGINT" property="deliveryCost"/>
+		<result column="VISIT_COUNT" jdbcType="BIGINT" property="visitCount"/>
+		<association property="goodsIpgoDTO" javaType="goodsIpgoDTO">
+		
+			<id column="goods_num" jdbcType="VARCHAR" property="goodsNum"/>
+			<id column="IPGO_DATE" jdbcType="DATE" property="ipgoDate"/>
+			<result column="IPGO_QTY" jdbcType="BIGINT" property="ipgoQty"/>
+			<result column="MADE_DATE" jdbcType="TIMESTAMP" property="madeDate"/>
+		</association>
+	</resultMap>
+	
+	
+	
+	
+	<resultMap type="kosaShoppingMall.domain.GoodsIpgoGoodsDTO" id="goodsIpgoGoodsMap1">
+		<association property="goodsDTO" javaType="goodsDTO" >			
+			<id column="goods_num" jdbcType="VARCHAR" property="goodsNum"/>
+			<result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
+			<result column="goods_price" jdbcType="BIGINT" property="goodsPrice"/>
+			<result column="goods_Content" jdbcType="VARCHAR" property="goodsContent"/>
+			<result column="DELIVERY_COST" jdbcType="BIGINT" property="deliveryCost"/>
+			<result column="VISIT_COUNT" jdbcType="BIGINT" property="visitCount"/>
+		</association>
+		<association property="goodsIpgoDTO"	 javaType="goodsIpgoDTO">	
+			<id column="goods_num" jdbcType="VARCHAR" property="goodsNum"/>
+			<id column="IPGO_DATE" jdbcType="DATE" property="ipgoDate"/>
+			<result column="IPGO_QTY" jdbcType="BIGINT" property="ipgoQty"/>
+			<result column="MADE_DATE" jdbcType="TIMESTAMP" property="madeDate"/>
+					
+		</association>
+	</resultMap>
+	
+		<select id="goodsIpgoCount" resultType="int">
+		select count(*) from goodsIpgo
+		<where>
+				<if test="goodsWord != null">
+				 	goods_Name like '%'||#{goodsWord}||'%'
+				 	or goods_Content like '%'||#{goodsWord}||'%'
+				</if>
+		</where>
+		</select>
+	
+	<select id="goodsIpgoCount1" resultType="int">
+		select count(*) from goodsIpgo
+	</select>
+	
+	
+	<delete id="goodsIpgoDels" parameterType="hashMap">
+		delete from goodsipgo
+		<where> (goods_num , ipgo_date) in
+		<foreach collection="condition" item="nums" index="index" open="(" close=")" separator=","  >
+			<foreach collection="nums" item="num" index="index" open="(" close=")" separator="," >
+				#{num}
+			</foreach>
+		</foreach>
+		</where>
+	</delete>
+	
+	
+	<delete id="goodsRemove" parameterType="hashMap">
+	
+		delete from goods
+		<where> goods_num in
+		<foreach collection="goodsNums" item="goodsNum" open="(" close=")" separator="," >
+			#{goodsNum}
+		</foreach>
+		
+		</where>
+	
+	</delete>
+	
+	
+	
+	
+	
+	
+	
+	<delete id="goodsDeletes" parameterType="hashMap">
+	
+		delete from  goods
+		<where> goods_num in
+		<foreach collection="cs" item="goodsNum" open="(" close=")" separator="," >
+			#{goodsNum}
+		</foreach>
+		</where>
+	
+	
+	</delete>
+	
+	
+	<delete id="cartDel" parameterType="hashMap">
+		delete from cart
+		<where> goods_num in
+		<foreach collection="goodsNum" item="goodsNums" open="(" close=")" separator="," >
+			#{goodsNums}
+		</foreach>
+		</where>
+
+	</delete>
+	
+	
+	
+	
+	
+	<delete id="goodsIpgoDelete" parameterType="goodsIpgoDTO" >
+		delete from goodsIpgo
+		where 	goods_num = #{goodsNum} and  IPGO_DATE = #{ipgoDate}	
+	
+	</delete>
+	
+	
+	<update id="goodsIpgoUpdate" parameterType="goodsIpgoDTO">
+		update goodsIpgo
+		set IPGO_QTY  = #{ipgoQty},  MADE_DATE = #{madeDate}
+		where goods_num = #{goodsNum} and  IPGO_DATE = #{ipgoDate}
+	
+	
+	</update>
+	
+	
+	
+		
+	<select id="getGoodsIpgoInfo"  parameterType="goodsDTO" resultMap="goodsIpgoGoodsMap" >
+			select g.goods_num , g.goods_name , g.goods_price , g.goods_content ,
+		g.DELIVERY_COST , g.VISIT_COUNT ,
+		i.IPGO_DATE , i.IPGO_QTY , i.MADE_DATE
+
+		from goods g , goodsipgo i
+		where g.goods_num = i.goods_num and g.goods_num = #{goodsNum} and
+		i.IPGO_DATE=#{ipgoDate}
+	</select>
+	
+	
+	
+	
+	<select id="ipgoDetail" parameterType="goodsIpgoDTO" resultMap="goodsIpgoGoodsMap1">
+		
+		select g.goods_num , g.goods_name , g.goods_price , g.goods_content ,
+		g.DELIVERY_COST , g.VISIT_COUNT ,
+		i.IPGO_DATE , i.IPGO_QTY , i.MADE_DATE
+
+		from goods g , goodsipgo i
+		where g.goods_num = i.goods_num and g.goods_num = #{goodsNum} and
+							i.IPGO_DATE=#{ipgoDate}
+	</select>
+	
+		
+		
+	<select id="goodsIpgoSelectAll" resultType="goodsIpgoDTO" parameterType="startEndPageDTO">
+		select*from	
+			(select rownum rn , IPGO_DATE ipgoDate , GOODS_NUM goodsNum , IPGO_QTY ipgoQty , MADE_DATE madeDate
+			from goodsipgo)
+		where rn between #{startRow} and #{endRow}
+		order by goodsNum desc , ipgoDate desc
+	
+	
+	
+	</select>		
+		
+		
+	<insert id="ipgoInsert" parameterType="goodsIpgoDTO">
+			insert into goodsipgo( IPGO_DATE , GOODS_NUM , IPGO_QTY , MADE_DATE )
+			values (#{ipgoDate},#{goodsNum},#{ipgoQty},#{madeDate})
+	</insert>	
+	
+		
+	<select id="goodsItems" parameterType="startEndPageDTO" resultType="goodsDTO">
+		select * from(
+			select rownum rn , goods_Num  goodsNum , goods_Name  goodsName,
+			   goods_Price goodsPrice , goods_Content  goodsContent, delivery_Cost  deliveryCost , visit_Count visitCount
+		from  goods
+		 <where>
+				<if test="goodsWord != null">
+				 	goods_Name like '%'||#{goodsWord}||'%'
+				 	or goods_Content like '%'||#{goodsWord}||'%'
+				</if>
+			</where>
+		)
+		where rn between #{startRow} and #{endRow} 
+		
+					<!-- 문자열과 문자열이 아닌것을 붙이기 위해서 ||를 썻다. -->
+		
+	</select>
+	
+	
+	<!--                       goods               -->
+	
+	<select id="searchGoods" parameterType="string" resultType="goodsDTO">
+		select goods_Num  goodsNum , goods_Name  goodsName,
+			   goods_Price goodsPrice , goods_Content  goodsContent, delivery_Cost  deliveryCost , visit_Count visitCount
+		from  goods
+		where goods_name like '%'||#{goodsWord}||'%'
+			  or goods_content like '%'||#{goodsWord}||'%'
+	</select>
+	
+	
+	<delete id="goodsDelete" parameterType="string">
+		delete 
+		from goods
+		where goods_num=#{goodsNum}
+		
+	</delete>
+	<update id="goodsUpdate">
+		update goods
+		<!--  맨 마지막 것만 ,를 없애겠다. suffix는 뒤에있는걸 없애라-->
+		<trim prefix="set" suffixOverrides=",">    goods_Name  =#{goodsName} ,
+			   goods_Price  =#{goodsPrice}  , goods_Content =#{goodsContent}  ,
+			    delivery_Cost =#{deliveryCost} ,
+		
+			  <if test="goodsImages != null">
+			  	GOODS_IMAGES = #{goodsImages},
+			  	GOODS_ORIGINAL =#{goodsOriginal},
+			  </if>
+			  <if test="goodsMain != null">
+			  	GOODS_MAIN =#{goodsMain},
+			  	GOODS_MAIN_ORG =#{goodsMainOrg}
+			  </if>
+		</trim> 
+		where goods_num = #{goodsNum}
+		
+	</update>
+	
+	<update id="goodsVisitCnt" parameterType="string">
+		update goods
+		set visit_count = visit_count+1
+		where  goods_num = #{goodsNum}
+	</update>
+	
+	<select id="goodsSelectOne" resultType="goodsDTO" parameterType="string">
+		select goods_Num  goodsNum , goods_Name  goodsName,
+			   goods_Price goodsPrice , goods_Content  goodsContent, delivery_Cost  deliveryCost , visit_Count visitCount,
+			   GOODS_MAIN goodsMain , GOODS_IMAGES goodsImages , GOODS_ORIGINAL goodsOriginal ,GOODS_MAIN_ORG goodsMainOrg
+		from   goods
+		where goods_num = #{goodsNum} 
+	
+	</select>
+	
+	
+	<select id="goodsCount" resultType="int" parameterType="string">
+	
+		select count(*) from goods
+		<where>
+				<if test="goodsWord != null">
+				 	goods_Name like '%'||#{goodsWord}||'%'
+				 	or goods_Content like '%'||#{goodsWord}||'%'
+				</if>
+		</where>
+		
+	</select>
+	
+	<select id="goodsSelectAll" resultType="goodsDTO" parameterType="startEndPageDTO">
+		
+		select * from( 
+			select rownum rn , goods_Num  goodsNum , goods_Name  goodsName,
+				   goods_Price goodsPrice , goods_Content  goodsContent, delivery_Cost  deliveryCost , visit_Count visitCount , 
+				   GOODS_MAIN goodsMain
+			from   goods
+			<where>
+				<if test="goodsWord != null">
+				 	goods_Name like '%'||#{goodsWord}||'%'
+				 	or goods_Content like '%'||#{goodsWord}||'%'
+				</if>
+			</where>
+			order by goodsNum desc
+		)
+		<if test="startRow != null">
+			where rn between #{startRow} and #{endRow} 
+		</if>
+	</select>
+	
+	<insert id="goodsInsert" parameterType="goodsDTO">
+		insert  into goods(goods_Num ,goods_Name , 
+				goods_Price ,goods_Content , delivery_Cost , visit_Count 
+				<!-- null이 아니면 하고 아니면 안한다. -->
+				<if test="goodsMain != null">
+					,GOODS_MAIN
+				</if>
+				<if test="goodsImages != null">
+					,GOODS_IMAGES
+				</if>
+				<if test="goodsOriginal !=null">
+					,GOODS_ORIGINAL
+				</if>
+				<if test="goodsMainOrg != null">
+					,GOODS_MAIN_ORG
+				</if>
+				
+				)
+		values (#{goodsNum},#{goodsName},
+				#{goodsPrice},#{goodsContent},#{deliveryCost},0
+				 <if test="goodsMain != null">
+					,#{goodsMain}
+				</if>
+				<if test="goodsImages != null">
+					,#{goodsImages}
+				</if>
+				<if test="goodsOriginal !=null">
+					,#{goodsOriginal}
+				</if>
+				<if test="goodsMainOrg != null">
+					,#{goodsMainOrg}
+				</if>)		
+	</insert>
+	
+	<select id="goodsAutoNum" resultType="string">
+		 select concat('goods',nvl(max(substr(goods_num,6)),10000)+1 
+				
+				) from goods
+	</select>
+
+
+</mapper>

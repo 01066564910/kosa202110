@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script > 
+function inquireUpdate(as) {
+	window.open("inquireUpdate?inquireNum="+as,"문의하기","width=700, height=650, top=100, left=100");
+}
+function inquireDelete(as) {
+	   location.href="inquireDelete?inquireNum="+as;
+}
+
+$(function(){//부모창 아이디를 자식창의 아이디가 똑같으면 아이디면 충돌이 나기때문에 같은 아이디를 쓰면 안된다.
+	$("#inquire1").click(function(){
+		window.open("inquireWrite?goodsNum=[[${goodsNum}]]","문의하기","width=700, height=650, top=100, left=100");
+	});
+});
+</script>
+</head>
+<body>
+<div>
+<table border="1" align="center" >
+	<tr><td colspan="5" align="right"><button type="button" id="inquire1" >문의 하기</button></td></tr>
+	<th:block th:each="dto  , idx: ${list}">
+	<tr><td>[[${idx.count}]]</td>
+		
+		<td>답변 상태 : </td>
+		<td>문의유형 [[${dto.inquireKind}]]</td>
+		<td>문의제목 [[${dto.inquireSubject}]]</td>
+		<td>작성자 [[${dto.memberDTO.memberId}]]</td>
+		<td>작성일자 [[${dto.inquireDate}]] 
+		<th:block th:if="${session.authInfo.userId == dto.memberDTO.memberId}">
+            <input type="button"  th:attr="onclick=|inquireDelete('${dto.inquireNum}');|" value="삭제 하기">||
+            <input type="button"  th:attr="onclick=|inquireUpdate('${dto.inquireNum}');|" value="수정 하기">
+         </th:block>
+		</td>
+	</tr>
+	<tr th:if="${dto.inquireAnswer != null}">
+		<td colspan="4"> [[${#dates.format(dto.inquireDate , 'yyyy-MM-dd')}]] <br/>
+				[[${dto.inquireAnswer}]]
+		</td>
+	</tr>
+	<tr><td colspan="4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+	</th:block>
+</table>
+</div>
+</body>
+</html>

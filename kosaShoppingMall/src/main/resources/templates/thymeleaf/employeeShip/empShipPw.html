@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="empMyPwOk" method="post" th:object="${newPwCommand}">
+비밀번호 : <input type="password" name="oldPw" > <br/>
+<span th:if="${#fields.hasErrors('oldPw')}" th:errors="*{oldPw}"></span><br/>
+변경할 비밀번호 : <input type="password" name="newPw" > <br/>
+<span th:if="${#fields.hasErrors('newPw')}" th:errors="*{newPw}"></span><br/>
+변경할 비밀번호 확인 : <input type="password" name="newPwCon" > <br/>
+<span th:if="${#fields.hasErrors('newPwCon')}" th:errors="*{newPwCon}"></span><br/>
+<input type="submit" value="비밀번호 바꾸기">
+</form>
+</body>
+</html>

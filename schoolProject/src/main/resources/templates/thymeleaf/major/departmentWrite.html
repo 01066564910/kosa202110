@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.1.min.js"></script>
+<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
+<script>
+   function openZipSearch() {
+      new daum.Postcode(
+            {
+               oncomplete : function(data) {
+                  var fullAddr = data.address; // 최종 주소 변수
+                  var extraAddr = ''; // 조합형 주소 변수
+
+                  // 기본 주소가 도로명 타입일때 조합한다.
+                  if (data.addressType === 'R') {
+                     //법정동명이 있을 경우 추가한다.
+                     if (data.bname !== '') {
+                        extraAddr += data.bname;
+                     }
+                     // 건물명이 있을 경우 추가한다.
+                     if (data.buildingName !== '') {
+                        extraAddr += (extraAddr !== '' ? ', '
+                              + data.buildingName : data.buildingName);
+                     }
+                     // 조합형주소의 유무에 따라 양쪽에 괄호를 추가하여 최종 주소를 만든다.
+                     fullAddr += (extraAddr !== '' ? ' (' + extraAddr
+                           + ')' : '');
+
+                     $('[name=fullAddr]').val(fullAddr);
+                     $('[name=zip]').val(data.zonecode); // 우편번호 (5자리)
+                     $('[name=addr1]').val(data.address);
+                     $('[name=addr2]').val(data.buildingName);
+                  }
+               }
+            }).open();
+   }
+</script>
+</head>
+<body>
+
+	<form action="departmentWrite" method="post"
+		th:object="${departmentCommand}">
+		<table border="1">
+			<tr>
+				<td>학과 번호</td>
+				<td><input type="text" th:value="${departmentNum}"
+					readonly="readonly" name="departmentNum"> <span
+					th:if="${#fields.hasErrors('departmentNum')}"
+					th:errors="*{departmentNum}"></span></td>
+			</tr>
+			<tr>
+				<td>학과 이름</td>
+				<td><input type="text" name="departmentName"> <span
+					th:if="${#fields.hasErrors('departmentName')}"
+					th:errors="*{departmentName}"></span></td>
+			</tr>
+			<tr>
+				<td>학과 전화번호</td>
+				<td><input type="tel" name="departmentPhone"></td>
+			</tr>
+			<tr>
+				<td>학과 주소</td>
+				<td>우편 번호 : <input type="text" name="zip">
+					<button type="button" onclick='openZipSearch();'>주소검색</button>
+					<br /> 전체 주소 : <input type="text" name="fullAddr" size="50">
+					<br /> 주소 : <input type="text" name="addr1"> 빌딩 이름 : <input
+					type="text" name="addr2"><br /> 상세 주소 : <input type="text"
+					name="depatymentAddr">
+				</td>
+			</tr>
+			<tr align="center">
+				<td colspan="2"><input type="submit" value="학과 만들기"></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

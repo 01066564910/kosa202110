@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+#leftMenu {
+	width: 25%;
+	float: left;
+	height: 500px;
+	margin-right: 50px;
+}
+
+#memberInfo {
+	float: left;
+	border-left: 1px solid gray;
+	padding-left: 50px;
+	height: 500px;
+}
+</style>
+</head>
+<body>
+	<ul id="leftMenu">
+		<li><a href="goodsList">상품 리스트</a></li>
+		<li><a href="goodsRegist">상품 등록</a></li>
+		<li><a href="goodsIpgoList">상품 입고 현황</a></li>
+		<li><a href="goodsIpgo">상품입고</a></li>
+		<li><a href="purchaseList">주문 내역</a>
+		<li><a href="goodsQuestion">상품 문의</a></li>
+	</ul>
+	<div id="memberInfo">
+		<form action="goodsIpgoModify" method="post">
+		<table border=1>
+			<tr>
+				<td>제품 번호</td>
+				<td><input type="text" name="goodsNum"
+				 th:value="${goodsIpgoGoodsCommand.goodsNum}" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td>제품 명</td>
+				<td>[[${goodsIpgoGoodsCommand.goodsPrice}]]</td>
+			</tr>
+			<tr>
+				<td>가격</td>
+				<td>[[${goodsIpgoGoodsCommand.goodsPrice}]]</td>
+			</tr>
+			<tr>
+				<td>내용</td>
+				<td>[[${goodsIpgoGoodsCommand.goodsContent}]]</td>
+			</tr>
+			<tr>
+				<td>배송비</td>
+				<td>[[${goodsIpgoGoodsCommand.deliveryCost}]]</td>
+			</tr>
+			<tr>
+				<td>조회수</td>
+				<td>[[${goodsIpgoGoodsCommand.visitCount}]]</td>
+			</tr>
+			
+			<tr>
+				<td>입고 일</td>
+				<td><input type="date" name="ipgoDate"
+				th:value="${#dates.format(goodsIpgoGoodsCommand.goodsIpgoDTO.ipgoDate ,'yyyy-MM-dd')}" readonly="readonly"/> </td>
+				
+			</tr>
+			<tr>
+				<td>입고 수량</td>
+				<td><input type="number" name="ipgoQty"
+				 th:value="${goodsIpgoGoodsCommand.goodsIpgoDTO.ipgoQty}" min="1"/>
+				
+			</tr>
+			<tr>
+				<td>제조 일</td>
+				<td><input type="datetime-local"  name="madeDate"
+				th:value="${#strings.replace(goodsIpgoGoodsCommand.goodsIpgoDTO.madeDate,' ','T')}"/></td>
+			</tr>
+				<tr>
+					<td colspan="2"><input type="submit" value="수정하기"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+
+</body>
+</html>

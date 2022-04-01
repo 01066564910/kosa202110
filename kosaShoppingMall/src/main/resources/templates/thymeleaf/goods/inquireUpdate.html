@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>문의 수정</h2>
+	<form method="post" action="inquireUpdate"   id="frmMain">
+	<input type="hidden" name="inquireNum" th:value="${goodsInquireCommand.inquireNum}">
+		<div id="body" class="withname">
+			<h1 class="fl"> 판매자에게 문의하기 </h1>
+			<hr>
+			<div id="maxzone" >
+				<div id="contents" >
+					<p class="product-seller">
+						<strong>상품명 :[[${goodsInquireCommand.goodsDTO.goodsName}]] </strong>
+					</p>
+					<div >
+						<table class="tbl-qna" >
+							<colgroup>
+								<col style="width: 17%;">
+								<col>
+							</colgroup>
+							<tbody>
+								<tr>
+									<th><img
+										src="http://pics.auction.co.kr/popup/txt_sellqna_th01.gif"
+										alt="문의유형" /></th>
+									<td class="type">
+										<input type="radio" id="hchkQueryType1"	name="hchkQueryType" th:value="${goodsInquireCommand.inquireKind}" />상품(성능/사이즈) 
+										<input type="radio" id="hchkQueryType2" name="hchkQueryType" th:value="${goodsInquireCommand.inquireKind}" />배송
+										<input type="radio" id="hchkQueryType3" name="hchkQueryType" th:value="${goodsInquireCommand.inquireKind}" />교환
+										<input type="radio" id="hchkQueryType4" name="hchkQueryType" th:value="${goodsInquireCommand.inquireKind}"/>반품/취소/환불 
+										<input type="radio" id="hchkQueryType5" name="hchkQueryType" th:value="${goodsInquireCommand.inquireKind}" />기타
+									</td>
+								</tr>
+								<tr class="cont">
+									<th>제목</th>
+									<td><input type="text" name="inquireSubject" th:value="${goodsInquireCommand.inquireSubject}" /></td>
+								</tr>
+								<tr class="cont">
+									<th>내용</th>
+									<td>
+											<textarea cols="50" rows="10" name="inquireContent" >[[${goodsInquireCommand.inquireContent}]]</textarea>
+
+									</td>
+								</tr>
+								<tr class="alarm">
+									<th><img
+										src="http://pics.auction.co.kr/popup/txt_sellqna_th06.gif"
+										alt="답변알림" /></th>
+									<td>
+										<p>답변이 도착하면 등록하신 이메일로 알려드립니다.</p>
+										<div class="fl">
+											<input type="text" id="email1" name="email1"
+												value="highland0" size="20" maxlength="35" /> @ <input
+												id="email2" type="text" name="email2" maxlength="30"
+												value="nate.com" />
+										</div>
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+
+						<div id="bottombutton" class="bottom-button layerpopup">
+							<input type="submit" name="btnInsert" id="btnInsert" value="문의 수정하기" /> 
+							<a href="javascript:self.close();">취소</a>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+	</form>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTO Mapper 3.0//EN"	
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kosaShoppingMall.mapper.EmployeeMapper">
+
+	<insert id="educationInserts" parameterType="educationDTO">
+		insert all	
+			<foreach collection="listss" item="educationDTO" index="index" >
+			 into education(emp_id , school_year , school)
+			values(#{educationDTO.empId} , #{educationDTO.schoolYear} , #{educationDTO.school})
+		</foreach>
+		select * from dual
+	</insert>
+
+
+	<insert id="educationInsert" parameterType="educationDTO">
+		insert into education(emp_id , school_year , school)
+		values(#{empId} , #{schoolYear} , #{school})
+	
+	</insert>
+
+	<select id="changePw" parameterType="authInfo">
+		update employees
+		set emp_pw = #{userPw}
+		where emp_id = #{userId}
+	</select>
+
+	<select id="empCount" resultType="int">
+		select count(*) from employees
+	</select>
+
+
+	<delete id="employeedel" parameterType="hashMap">
+		delete from employees
+		<where>
+			emp_id in
+			<foreach collection="delete" item="empId" open="(" close=")" separator=",">
+				#{empId}
+			</foreach>
+		</where>
+	
+	</delete>
+
+	<insert id="employeeInsert">
+		insert into employees( emp_id , emp_pw , emp_name , emp_addr , emp_phone ,emp_email)
+		values (#{empId},  #{empPw},  #{empName},  #{empAddr},  #{empPhone} ,#{empEmail})
+	
+	</insert>
+	<select id="employeeSelectAll" resultType="empDTO" parameterType="startEndPageDTO">
+		select * from(
+			    select rownum rn , emp_id empId , emp_pw empPw , emp_name empName
+			 	, emp_addr  empAddr, emp_phone empPhone
+				from employees)
+		where rn between #{startRow} and #{endRow}
+	</select>
+	
+	<resultMap type="empDTO" id="employeeBaseResultMap">
+		<id column="empId" jdbcType="VARCHAR" property="empId"/>
+		<result column="empPw" jdbcType="VARCHAR" property="empPw"/>
+		<result column="empName" jdbcType="VARCHAR" property="empName"/>
+		<result column="empAddr" jdbcType="VARCHAR" property="empAddr"/>
+		<result column="empPhone" jdbcType="VARCHAR" property="empPhone"/>
+		<result column="empEmail" jdbcType="VARCHAR" property="empEmail"/>
+		<collection property="education" ofType="educationDTO"> 
+			<id column="empId" jdbcType="VARCHAR" property="empId"/>
+			<id column="school_year" jdbcType="DATE" property="schoolYear"/>
+			<id column="school" jdbcType="VARCHAR" property="school"/>
+		</collection>
+	
+	</resultMap>
+	
+	
+	<select id="employeeSelectOne" resultMap="employeeBaseResultMap" parameterType="string">
+		select em.emp_id empId , emp_pw empPw , emp_name empName
+		 , emp_addr  empAddr, emp_phone empPhone , emp_email empEmail , school_year , school
+		from employees em , education ed
+		where em.emp_id = ed.emp_id(+) and em.emp_id = #{empId}
+	</select>
+	<update id="employeeUpdate" parameterType="empDTO">
+		update employees
+		set emp_name = #{empName},  emp_addr = #{empAddr}, emp_phone = #{empPhone},
+			emp_email =#{empEmail}
+ 		where emp_id= #{empId}
+	</update>
+	<delete id="employeeDelete" parameterType="empDTO">
+		delete from 
+		employees
+		where emp_id=#{empId}
+	</delete>
+	<update id="employeePwChageOk" parameterType="empDTO">
+		update employees
+		set emp_pw = #{empPw}
+		where emp_id = #{empId}
+	
+	</update>
+	
+	
+	
+	
+</mapper>

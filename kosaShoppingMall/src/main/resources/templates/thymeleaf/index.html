@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+
+</style>
+</head>
+<body>
+<div>
+	<th:block th:if="${session.authInfo == null}">
+	<table align="center" border=1 >
+		<form action="/login/loginPro" name="frm"  method="post" th:object="${loginCommand}">
+			<tfoot>
+				<tr>
+					<td colspan="3">
+					<a href="/register/agree">회원가입</a>&nbsp;
+					<a href="/help/findId">아이디 찾기</a>&nbsp;
+					<a href="/help/findPassword">비밀번호 찾기</a></td>
+				</tr>
+			</tfoot>
+			<thead>
+				<tr>
+					<td colspan="3">
+					자동 로그인|  <input type="checkbox" name="autuLogin"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;					<!--  isId가 있으면 체크드 없으면 안되는것  -->
+					아이디 저장	   <input type="checkbox" name="idStore" th:checked="${isId}"/></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>아이디</td>
+					<td>
+						<input type="text" name="userId" id="userId" placeholder="아이디 입력" th:if="${isId !=null}"  th:value="${isId}">
+						<input type="text" name="userId" id="userId" placeholder="아이디 입력" th:if="${isId ==null}" th:value="${loginCommand.userId}">
+						<span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
+					</td>
+					<!-- src="@{/static/images/img1.jpg -->
+					<td rowspan="2"><input type="image" width="80px" height="80px" src="/static/images/s_img2.jpg" id="imgSubmit">
+					</td>
+				</tr>
+				<tr>
+					<td>비밀번호</td>
+					<td><input type="password" placeholder="비밀번호 입력" name="userPw">
+						<!-- command에서 userPw의 에러가 발생하면 거기에 있는 메세지가 발생하는 이벤트. -->
+						<span th:if="${#fields.hasErrors('userPw')}" th:errors="*{userPw}"></span>
+					</td>
+				</tr>
+			</tbody>
+		</form>
+	</table>
+	</th:block>
+	<th:block th:if="${session.authInfo != null}">
+	<a href="/login/logout">로그아웃</a>
+	<a href="/jsonMain">jsonTest</a>
+	<th:block th:switch="${session.authInfo.grade}">
+		
+		<th:block th:case="emp">
+			<a href="/emp/empList">직원 정보</a>
+			<a href="/member/memberList">회원 관리</a>
+			<a href="/empMypage/empDetail">직원 내 정보보기</a>
+			<a href="/goods/goodsList">상품 관리</a>
+		</th:block>
+			<th:block th:case="member">
+			<a href="cart/orderList">주문목록</a>
+			<a href="/cart/goodsCartList">장바구니</a>
+			<a href="/mypage/memberInfo">내 정보 보기</a>
+			
+		</th:block>
+	</th:block>
+	</th:block>
+</div>
+
+<div>
+	<table align="center" >
+		<tr>
+			<th:block th:each=" goodsDTO , idx : ${lists}">
+				<td>
+					<a th:href="@{/corner/prodInfo(goodsNum=${goodsDTO.goodsNum})}">
+						<img alt="" th:src="|/goods/upload/${goodsDTO.goodsMain}|" width="200" height="200" /><br/>
+						[[${goodsDTO.goodsName}]]<br/>
+						가격 : [[${#numbers.formatCurrency(goodsDTO.goodsPrice)}]]
+					</a>
+				</td>
+				<th:block th:if="${idx.count % 3 == 0}" th:utext="'</tr><tr>'" />
+			</th:block>
+		</tr>
+	</table>
+</div>
+
+</body>
+</html>

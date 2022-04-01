@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script>
+function inquire() {
+	$.ajax({
+		type : "post",
+		url : "/corner/inquire",
+		dataType :	"html" ,
+		data : {"goodsNum":"[[${goodsCommand.goodsNum}]]" },
+		success : function (result) {
+			$("#notice").html(result);
+				
+		},error : function () {
+			alert("코드레드  코드레드");
+			return;
+		}
+	});
+}
+
+$(function () {
+	
+	$("#review").click(function () {
+		$.ajax({
+			type : "post",
+			url : "/corner/reviewList",
+			dataType :	"html" ,
+			data : {"goodsNum":"[[${goodsCommand.goodsNum}]]" },
+			success : function (result) {
+				$("#notice").html(result);
+					
+			},error : function () {
+				alert("코드레 코드레");
+				return;
+			}
+		});
+	});
+	$("#cartAdd").click(function () {
+		$.ajax({
+			type : "post",
+			url : "/cart/goodsCartAdd",
+			dataType : "text",
+			data : {"goodsNum" :"[[${goodsCommand.goodsNum}]]" , "goodsQty" :$("#qty").val()},
+			success : function (result) {
+				if(result.trim()=="1"){
+					location.href="/cart/goodsCartList";
+				}else{
+					alert("장바구니에 담기지 않았습니다.\n다시 시도 해주세요.")
+				}
+			},error : function () {
+				alert("코드에러 코드에러~ 잘 좀 해 ~잠만 자지말고~");
+				return;
+			}
+		});
+	});
+	
+	
+	//change는 값이 계속 바뀌는 것
+	$("#qty").change(function () {
+		var qty = $("#qty").val();
+		$("#tot").html(qty * [[${goodsCommand.goodsPrice }]]);
+	});
+	
+	$("#wishBtn").click(function () {
+		if([[${session.authInfo == null}]]){
+			alert("로그인을 하셔야 합니다.");
+			location.href="/";
+			return false;
+		}
+		else{
+			$.ajax({
+				type:"GET",
+				url:"/cart/goodsWishAdd",
+				dataType:"text",
+				data : {"goodsNum" : "[[${goodsCommand.goodsNum}]]"},
+				success: function (result) {
+				
+					if(result.trim() =="1"){
+						$("#wishBtn").attr("src" ,"/static/images/s_img2.jpg");
+						alert("관심상품에 등록되었습니다.")
+						
+					}else{
+						$("#wishBtn").attr("src" ,"/static/images/s_img4.jpg");
+						alert("관심상품에 삭제되었습니다.")
+						}
+					
+				},error : function () {
+					alert("에러" );
+					
+				}
+			
+			});
+		}
+	});
+});
+</script>
+
+
+<form action="#" name="frm" method="post">
+	<table width="800" align="center" border="1" >
+		<tr>
+			<td colspan="2">[[${goodsCommand.goodsName}]] 상품 설명입니다.</td>
+		</tr>
+		
+		<tr>
+			<td rowspan="6">
+				<img height="500" th:src="|/goods/upload/${goodsCommand.goodsMain}|"/>
+			</td>
+			<td width="300">
+				 [[${goodsCommand.goodsName}]] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 관심상품
+				 <img th:if="${chk == null}" src="/static/images/s_img4.jpg" width="50px" id="wishBtn">
+				 <img th:if="${chk != null}" src="/static/images/s_img2.jpg" width="50px" id="wishBtn">
+			</td>
+		</tr>
+		
+		<tr>
+			<td align="left">가격 :[[${#numbers.formatCurrency(goodsCommand.goodsPrice)}]]원</td>
+		</tr>
+		
+		<tr>
+			<td align="left">배송비 :<span th:if="${goodsCommand.deliveryCost ==0}" th:text="무료배송"></span>
+			<span th:if="${goodsCommand.deliveryCost !=0}" th:text="${goodsCommand.deliveryCost}">원</span>
+			</td>
+		</tr>
+				<tr>
+			<td align="left">수량 : <input type="number" size="3" min="1"  name="purchaseQty" value="1" id="qty"  />[[${#numbers.formatCurrency(goodsCommand.goodsPrice)}]]원 </td>
+		</tr>
+		<tr>
+			<td align="left" >총 상품금액 &nbsp;&nbsp; : &nbsp;&nbsp;&nbsp;<span id="tot">[[${goodsCommand.goodsPrice}]]</span>원
+			</td>
+		</tr>
+		<tr>
+			<td align="center"><input type="button" value="장바구니" id="cartAdd"/><input type="submit" value=바로구매 /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				제품 상세 설명
+				<p>
+			 		<span th:utext="${#strings.replace(goodsCommand.goodsContent, newLineChar ,'&lt;br/&gt;')}" ></span>
+				</p>
+					<th:block th:each="goodsImage : ${#strings.arraySplit(goodsCommand.goodsImages,'`')}">
+						<img th:src="|/goods/upload/${goodsImage}|" width="100"/><br/>
+					</th:block>
+			</td>
+		</tr>
+	</table>
+</form>
+<table width="800" align="left" >
+<tr><td>
+	<ul>
+		<li><span id="review">리뷰</span></li>
+		<li><span  onclick="inquire();">상품 문의</span></li>
+	</ul> 
+
+	<span id="notice" >
+	
+	  </span> 
+	</td></tr>
+</table>
+</body>
+</html>

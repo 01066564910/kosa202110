@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+#body {
+	width: 1000px;
+}
+
+#leftMenu {
+	width: 25%;
+	float: left;
+	height: 500px;
+	margin-right: 50px;
+}
+
+#memberInfo {
+	float: left;
+	border-left: 1px solid gray;
+	padding-left: 50px;
+	height: 500px;
+}
+</style>
+</head>
+<body>
+	<div id="body">
+		<ul id="leftMenu">
+			<li><a href="memberInfo">내 정보 보기</a></li>
+			<li><a href="memberForm"> 내 정보 수정</a></li>
+			<li><a href="memberPw"> 비밀번호 수정</a></li>
+			<li><a href="memberUserDel">회원 탈퇴</a></li>
+		</ul>
+		<div id="memberInfo">
+			<h3>회원 탈퇴를 위한 비밀번호를 입력해주세요</h3>
+			<hr />
+			<form action="memberUserDelCon" method="post" th:object="${newPwCommand}">
+				<input type="hidden" name="newPw" value="123123"/>
+				<input type="hidden" name="newPwCon" value="123123"/>
+				탈퇴를 위한 비밀번호 입력: <input type="password" name="oldPw"/>
+				<span th:if="${#fields.hasErrors('oldPw')}" th:errors="*{oldPw}"></span><br/>
+				<input type="submit" value="비밀번호 확인">
+			</form>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.1.min.js"></script>
+<script type="text/javascript">
+function fileDel(orgFile , strFile,btn,kind) {
+	$.ajax({
+		type:"get",
+		url : "fileDel",
+		dataType : "text",
+		data:{"orgFile" :orgFile , "strFile" :strFile , "kind":kind},
+		success : function (result) {
+			if(result.trim() ==1){
+				$(btn).val("삭제 취소");
+				return;
+			}else{
+				$(btn).val("삭제");
+				return;
+			}
+		},
+		error : function () {
+			alert("코드에러 코드에러~");
+			return;
+		}
+	});
+	
+}
+</script>
+<style type="text/css">
+#leftMenu {
+	width: 25%;
+	float: left;
+	height: 500px;
+	margin-right: 50px;
+}
+
+#memberInfo {
+	float: left;
+	border-left: 1px solid gray;
+	padding-left: 50px;
+	height: 500px;
+}
+</style>
+</head>
+<body>
+	<ul id="leftMenu">
+		<li><a href="goodsList">상품 리스트</a></li>
+		<li><a href="goodsRegist">상품 등록</a></li>
+		<li><a href="goodsIpgoList">상품 입고 현황</a></li>
+		<li><a href="goodsIpgo">상품입고</a></li>
+		<li><a href="purchaseList">주문 내역</a>
+		<li><a href="goodsQuestion">상품 문의</a></li>
+	</ul>
+	<div id="memberInfo">
+		<form action="goodsUpdate" method="post" name="frm" id="frm"
+			th:object="${goodsCommand}" enctype="multipart/form-data">
+			<table border="1">
+				<caption>
+					<strong>상품 수정</strong>
+				</caption>
+				<tr>
+					<th>제품 번호</th>
+					<td><input type="text" name="goodsNum"
+						th:value="${goodsCommand.goodsNum}" readonly="readonly" /> :
+						goods10001번부터 자동 부여 <span th:if="${#fields.hasErrors('goodsNum')}"
+						th:errors="*{goodsNum}"></span></td>
+
+				</tr>
+				<tr>
+					<th>상품명</th>
+					<td><input type="text" name="goodsName"
+						th:value="${goodsCommand.goodsName}" /> <span
+						th:if="${#fields.hasErrors('goodsName')}" th:errors="*{goodsName}"></span>
+					</td>
+				</tr>
+				<tr>
+					<th>상품 가격</th>
+					<td><input type="number" name="goodsPrice" min="1000"
+						step="1000" value="1000" /> <span
+						th:if="${#fields.hasErrors('goodsPrice')}"
+						th:errors="*{goodsPrice}"></span></td>
+				</tr>
+				<tr>
+					<th>상품 내용</th>
+					<td><textarea rows="6" cols="30" name="goodsContent">[[${goodsCommand.goodsContent}]]</textarea>
+						<span th:if="${#fields.hasErrors('goodsContent')}"
+						th:errors="*{goodsContent}"></span></td>
+				</tr>
+				<tr>
+					<th>배송비</th>
+					<td><input type="number" name="deliveryCost" min="2000"
+						step="500" value="2000" /> <span
+						th:if="${#fields.hasErrors('deliveryCost')}"
+						th:errors="*{deliveryCost}"></span></td>
+				</tr>
+				<tr>
+					<th>메인 이미지</th>
+					<td>
+						<input type="file" name="goodsMain" /><br/>
+					</td>
+				</tr>
+				<tr>
+					<th>이미지</th>
+					<td>
+						<input type="file" name="goodsImages" multiple="multiple"/>
+					</td>
+				</tr>
+				
+				
+				<tr>
+					<th>등록된 메인 이미지</th>
+					<td>[[${goodsCommand.goodsMainOrg}]] 		<!--  this하면 자기자신 -->
+					
+						<input type="button" value="삭제" th:attr="onclick=|fileDel('${goodsCommand.goodsMainOrg}' , 
+																			   	'${goodsCommand.goodsMain}',
+																			   	 this , 'main');|"/>
+						
+					</td>
+				</tr>
+				<tr>
+					<th>등록된 이미지</th>
+					<td>
+						<div th:each="file ,idx : ${#strings.arraySplit(goodsCommand.goodsOriginal,'`')}">
+						[[${file}]]
+						<input type="button" value="삭제"  
+						th:attr ="onclick=|fileDel('${file}' ,
+								'${#strings.arraySplit(goodsCommand.goodsImages ,'`')[idx.index]}',
+								 this ,
+								 'img');|" />
+						<br/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<th colspan="2"><input type="submit" value="상품 수정 완료" /> <input
+						type="reset" value="다시 작성" /> <input type="button" value="상품 리스트"
+						onclick="javascript:location.href='goodsList'" /></th>
+				</tr>
+			</table>
+
+		</form>
+	</div>
+</body>
+</html>

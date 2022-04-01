@@ -1,0 +1,8 @@
+<body>
+	<select id="professorNum" name="professorNum">
+		<option value="0">---교수를 선택해 주세요 -------</option>
+		<th:block th:each="dto :${list}">
+			<option th:value="${dto.professorNum}">[[${dto.professorName}]]</option>
+		</th:block>
+	</select>
+</body>
