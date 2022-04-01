@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      ">
+    <!--  xml은 텍스트파일이라 객체를 생성할 수가없다. 그래서 스프링이 이렇게 적어주면 알아서 만들어준다. -->
+	<!--  				id 						 -->  
+	<!--  MemberDao memberDao = new MemberDAO() -->
+	<bean  id="memberDao" class="spring.dependencyTest4.DTO.MemberDao" />
+	<!--     MemberPrinter  printer = new  MemberPrinter()-->
+	<bean id="printer" class="spring.dependencyTest4.service.MemberPrinter" />
+	
+	
+	
+	<!--  MemberRegisterService memberRegisterService =
+			new MemberRegisterService(memberDAO) -->
+	<bean id="memberRegisterService"
+		class="spring.dependencyTest4.service.MemberRegisterService" >
+		<!--          생성자에있는 아그먼트 네임   ref는 의존객체 주입               -->
+		<constructor-arg name="memberDao" ref="memberDao" />
+		</bean>
+		
+		<!--  MemberListPrinter memberListPrinter =
+					new MemberListPrinter(memberDao,printer) 어셈블러에서 이렇게 표한하고 있는것을 스프링은 이렇게 표현한다는것을 알려주는 것이다. -->
+					<bean id ="memberListPrinter"
+						class="spring.dependencyTest4.service.MemberListPrinter">
+	<!--    name=>객체주입을 받는 매개변수  멤버필드명        ref=>객체주입   위에있는 다오 명 -->
+		<constructor-arg name="memberDao" ref="memberDao" />
+		<constructor-arg name="printer" ref="printer" />
+		</bean>
+		<bean id="changePasswordService" class="spring.dependencyTest4.service.ChangePasswordService">
+		<constructor-arg name="memberDao" ref="memberDao" />
+		</bean>
+		<bean id="memberInfoPrinter" class="spring.dependencyTest4.service.MemberInfoPrinter">
+		<constructor-arg  name="memberDao" ref="memberDao"/>
+		</bean>
+						
+</beans>
