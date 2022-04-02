@@ -21,6 +21,10 @@ public class CheckController {
 	@Autowired
 	StudentEmailUpdateCkService studentEmailUpdateCkService;
 	
+	
+	
+	
+	
 	// 교수 마이페이지
 	// 교수 업데이트 페이지
 	
